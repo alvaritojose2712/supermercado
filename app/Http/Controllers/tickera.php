@@ -111,8 +111,8 @@ class tickera extends Controller
 
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
 
-                $tux = EscposImage::load(resource_path() . "/images/small.jpg", false);
-                $printer -> bitImage($tux);
+                //$tux = EscposImage::load(resource_path() . "/images/small.jpg", false);
+                //$printer -> bitImage($tux);
                 $printer -> setTextSize(1,1);
 
                 $printer -> text("\n");

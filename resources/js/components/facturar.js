@@ -2157,7 +2157,11 @@ const guardar_cierre = (e,callback=null) => {
           setLoading(true)
           db.backup({}).then(res=>{
             notificar(res)
-            setLoading(false)
+
+            db.sendCuentasporCobrar({}).then(res=>{
+              notificar(res)
+              setLoading(false)
+            })
           })
           
 

@@ -1155,7 +1155,7 @@ class PedidosController extends Controller
 
             $from1 = $sucursal->correo;
             $from = $sucursal->sucursal;
-            $subject = $sucursal->sucursal." | CIERRE DIARIO | ".$req->fecha;
+            $subject = "CIERRE DIARIO | ".$req->fecha. " | ".$sucursal->sucursal;
             try {
                 
                 Mail::to($this->sends)->send(new enviarCierre($arr_send,$from1,$from,$subject));    
@@ -1178,8 +1178,8 @@ class PedidosController extends Controller
 
         $from1 = $sucursal->correo;
         $from = $sucursal->sucursal;
-        $subject = $sucursal->sucursal." | CUENTAS POR COBRAR | ".$today;
-        $data = (new PagoPedidosController)->getDeudoresFun("","saldo","asc",$today);
+        $subject = "CUENTAS POR COBRAR | ".$today." | ".$sucursal->sucursal;
+        $data = (new PagoPedidosController)->getDeudoresFun("","saldo","asc",$today,20000);
         try {
             
             Mail::to($this->sends)->send(new enviarCuentaspagar([
