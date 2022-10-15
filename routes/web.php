@@ -34,7 +34,7 @@ Route::get('/backup', function () {
 
     Artisan::call('backup:run',['--only-db' => true]);
 
-    return 'Successful backup!';
+    return 'Copia de seguridad completada!';
 
 });
 

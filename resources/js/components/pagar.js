@@ -125,6 +125,245 @@ settipoTransferenciaPagar
   const [vuelto_penddolar,setvuelto_penddolar] = useState(0)
   const [vuelto_pendbs,setvuelto_pendbs] = useState(0)
   const [vuelto_pendcop,setvuelto_pendcop] = useState(0)
+
+  const [recibido_dolar, setrecibido_dolar] = useState("")
+  const [recibido_bs, setrecibido_bs] = useState("")
+  const [recibido_cop, setrecibido_cop] = useState("")
+  const [cambio_dolar, setcambio_dolar] = useState("")
+  const [cambio_bs, setcambio_bs] = useState("")
+  const [cambio_cop, setcambio_cop] = useState("")
+
+  const [cambio_tot, setcambio_tot] = useState("")
+  const [cambio_tot_result, setcambio_tot_result] = useState("")
+  const [recibido_tot, setrecibido_tot] = useState("")
+
+  const [pagoefec_dolar, setpagoefec_dolar] = useState("")
+  const [pagoefec_bs, setpagoefec_bs] = useState("")
+  const [pagoefec_cop, setpagoefec_cop] = useState("")
+
+  useEffect(()=>{
+    if (refinputaddcarritofast.current) {
+      refinputaddcarritofast.current.value = ""
+
+    }
+    // refinputaddcarritofast.current.focus()
+  },[])
+
+
+
+  useEffect(()=>{
+    sumRecibido()
+  },[recibido_bs,recibido_cop,recibido_dolar])
+
+  
+
+
+
+  const changeRecibido = (val,type) => {
+    switch(type){
+      case "recibido_dolar":
+        setrecibido_dolar(number(val))
+      break;
+      case "recibido_bs":
+        setrecibido_bs(number(val))
+      break;
+      case "recibido_cop":
+        setrecibido_cop(number(val))
+      break;
+    }
+
+  }
+
+  const sumRecibido = () => {
+    let vuel_dolar = parseFloat(recibido_dolar?recibido_dolar:0)
+    let vuel_bs = parseFloat(recibido_bs?recibido_bs:0) / parseFloat(dolar)
+    let vuel_cop = parseFloat(recibido_cop?recibido_cop:0) / parseFloat(peso)
+
+    let t =  (vuel_dolar + vuel_bs + vuel_cop)
+    let cambio_dolar = t-pedidoData.clean_total 
+    setrecibido_tot((t).toFixed(2)) 
+    setcambio_dolar(cambio_dolar.toFixed(2))
+    setcambio_bs("")
+    setcambio_cop("")
+    setcambio_tot_result(cambio_dolar.toFixed(2)) 
+  }
+  
+  const setSubEfecbs = () => {
+    setpagoefec_bs((efectivo*dolar).toFixed(2))
+    setpagoefec_dolar("")
+    setpagoefec_cop("")
+  }
+  const setSubEfecdolar = () => {
+    setpagoefec_bs("")
+    setpagoefec_dolar(efectivo)
+    setpagoefec_cop("")
+  }
+  const setSubEfeccop = () => {
+    setpagoefec_bs("")
+    setpagoefec_dolar("")
+    setpagoefec_cop((efectivo*peso).toFixed(2))
+  }
+
+  const setVueltobs = () => {
+    setcambio_bs((cambio_tot_result*dolar).toFixed(2))
+    setcambio_dolar("")
+    setcambio_cop("")
+  }
+  const setVueltodolar = () => {
+    setcambio_bs("")
+    setcambio_dolar(cambio_tot_result)
+    setcambio_cop("")
+  }
+  const setVueltocop = () => {
+    setcambio_bs("")
+    setcambio_dolar("")
+    setcambio_cop((cambio_tot_result*peso).toFixed(2))
+  }
+
+
+  const changeCambio = (val,type) => {
+    switch(type){
+      case "cambio_dolar":
+        setcambio_dolar(number(val))
+      break;
+      case "cambio_bs":
+        setcambio_bs(number(val))
+      break;
+      case "cambio_cop":
+        setcambio_cop(number(val))
+      break;
+    }
+  }
+
+
+  const syncCambio = (val,type) => {
+    val = number(val)
+    let valC = 0
+    if (type=="Dolar") {
+      setcambio_dolar(val)
+      valC = val
+    }
+    else if (type=="Bolivares") {
+      setcambio_bs(val) 
+      valC = parseFloat(val?val:0) / parseFloat(dolar)
+
+    }
+    else if (type=="Pesos") {
+      setcambio_cop(val)
+      valC = parseFloat(val?val:0) / parseFloat(peso)
+    }
+    
+
+
+    let divisor=0;
+
+    let inputs = [
+      {key:"Dolar", val:cambio_dolar, set:(val)=>setcambio_dolar(val)},
+      {key:"Bolivares", val:cambio_bs, set:(val)=>setcambio_bs(val)},
+      {key:"Pesos", val:cambio_cop, set:(val)=>setcambio_cop(val)},
+    ]
+
+    inputs.map(e => {
+      if (e.key!=type) {
+        if (e.val) {divisor++}
+      }
+    })
+    let cambio_tot_resultvalC = 0
+    if (cambio_bs&&cambio_dolar&&type=="Pesos") {
+      let bs = parseFloat(cambio_bs) / parseFloat(dolar)
+      setcambio_dolar((cambio_tot_result-bs-valC).toFixed(2))
+    }else{
+      inputs.map(e => {
+        if (e.key!=type) {
+          if (e.val) {
+            cambio_tot_resultvalC = (cambio_tot_result-valC)/divisor
+            if (e.key=="Dolar") {
+              e.set((cambio_tot_resultvalC).toFixed(2))
+            }else if (e.key=="Bolivares") {
+              e.set((cambio_tot_resultvalC*dolar).toFixed(2))
+            }else if (e.key=="Pesos") {
+              e.set((cambio_tot_resultvalC*peso).toFixed(2))
+            }
+          }
+        }
+      })
+
+    }
+
+    
+  }
+
+
+  const syncPagoEfec = (val,type) => {
+    val = number(val)
+    let valC = 0
+    if (type=="Dolar") {
+      setpagoefec_dolar(val)
+      valC = val
+    }
+    else if (type=="Bolivares") {
+      setpagoefec_bs(val) 
+      valC = parseFloat(val?val:0) / parseFloat(dolar)
+
+    }
+    else if (type=="Pesos") {
+      setpagoefec_cop(val)
+      valC = parseFloat(val?val:0) / parseFloat(peso)
+    }
+    
+
+
+    let divisor=0;
+
+    let inputs = [
+      {key:"Dolar", val:pagoefec_dolar, set:(val)=>setpagoefec_dolar(val)},
+      {key:"Bolivares", val:pagoefec_bs, set:(val)=>setpagoefec_bs(val)},
+      {key:"Pesos", val:pagoefec_cop, set:(val)=>setpagoefec_cop(val)},
+    ]
+
+    inputs.map(e => {
+      if (e.key!=type) {
+        if (e.val) {divisor++}
+      }
+    })
+
+    let efectivovalC = 0
+    if (pagoefec_bs&&pagoefec_dolar&&type=="Pesos") {
+      let bs = parseFloat(pagoefec_bs) / parseFloat(dolar)
+      setpagoefec_dolar((efectivo-bs-valC).toFixed(2))
+      console.log("is pesos")
+    }else{
+      inputs.map(e => {
+        if (e.key!=type) {
+          if (e.val) {
+            efectivovalC = (efectivo-valC)/divisor
+            if (e.key=="Dolar") {
+              e.set((efectivovalC).toFixed(2))
+            }else if (e.key=="Bolivares") {
+              e.set((efectivovalC*dolar).toFixed(2))
+            }else if (e.key=="Pesos") {
+              e.set((efectivovalC*peso).toFixed(2))
+            }
+          }
+        }
+      })
+
+    }
+
+    
+  }
+
+
+  
+  const sumCambio = () => {
+    let vuel_dolar = parseFloat(cambio_dolar?cambio_dolar:0)
+    let vuel_bs = parseFloat(cambio_bs?cambio_bs:0) / parseFloat(dolar)
+    let vuel_cop = parseFloat(cambio_cop?cambio_cop:0) / parseFloat(peso)
+    return (vuel_dolar + vuel_bs + vuel_cop).toFixed(2)
+  }
+
+
+  
   const debitoBs = (met) =>{
     try{
       if (met=="debito") {
@@ -202,13 +441,9 @@ settipoTransferenciaPagar
   }
 
   
-  useEffect(()=>{
-    if (refinputaddcarritofast.current) {
-      refinputaddcarritofast.current.value = ""
+  
 
-    }
-    // refinputaddcarritofast.current.focus()
-  },[])
+  
   try{
     const {
       id,
@@ -582,6 +817,36 @@ settipoTransferenciaPagar
                   </div>
                 </div>
 
+                {/*{efectivo!=""?<div className="row">
+                    <div className="col p-0">
+                      <div className={(pagoefec_dolar!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                        <div className="card-body">
+                          <div className="card-title pointer " onClick={setSubEfecdolar} >$</div>
+                          <div className="card-text pago-numero"><input type="text" value={pagoefec_dolar} onChange={(e)=>syncPagoEfec(e.target.value,"Dolar")} placeholder="$"/></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col p-0">
+                      <div className={(pagoefec_bs!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                        <div className="card-body">
+                          <div className="card-title pointer " onClick={setSubEfecbs} >BS</div>
+                          <div className="card-text pago-numero"><input type="text" value={pagoefec_bs} onChange={(e)=>syncPagoEfec(e.target.value,"Bolivares")} placeholder="BS"/></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col p-0">
+                      <div className={(pagoefec_cop!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                        <div className="card-body">
+                          <div className="card-title pointer " onClick={setSubEfeccop} >COP</div>
+                          <div className="card-text pago-numero"><input type="text" value={pagoefec_cop} onChange={(e)=>syncPagoEfec(e.target.value,"Pesos")} placeholder="COP"/></div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                :null}*/}
+
               </div>
               {editable?
                 <div className="container p-0 m-0">
@@ -672,6 +937,95 @@ settipoTransferenciaPagar
                 </table>
               </div>
               <div className="d-flex justify-content-center">
+                <table className="table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div className="container-fluid">
+                          <div className="row">
+                            <div className="col p-0">
+                              <div className={(recibido_dolar!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer" >$</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={recibido_dolar} onChange={(e)=>changeRecibido(e.target.value,"recibido_dolar")} placeholder="$"/></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="col p-0">
+                              <div className={(recibido_bs!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer" >BS</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={recibido_bs} onChange={(e)=>changeRecibido(e.target.value,"recibido_bs")} placeholder="BS"/></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="col p-0">
+                              <div className={(recibido_cop!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer" >COP</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={recibido_cop} onChange={(e)=>changeRecibido(e.target.value,"recibido_cop")} placeholder="COP"/></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </td>
+                      <td className="align-middle text-right">
+                        Pagado
+                        <br/>
+                        <span className="text-success fs-2 fw-bold">
+                          {recibido_tot}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div className="container-fluid">
+                          <div className="row">
+                            <div className="col p-0">
+                              <div className={(cambio_dolar!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer " onClick={setVueltodolar} >$</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={cambio_dolar} onChange={(e)=>syncCambio(e.target.value,"Dolar")} placeholder="$"/></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="col p-0">
+                              <div className={(cambio_bs!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer " onClick={setVueltobs} >BS</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={cambio_bs} onChange={(e)=>syncCambio(e.target.value,"Bolivares")} placeholder="BS"/></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="col p-0">
+                              <div className={(cambio_cop!=""?"bg-success-light card-sinapsis addref":"t-5")+(" card")}>
+                                <div className="card-body">
+                                  <div className="card-title pointer " onClick={setVueltocop} >COP</div>
+                                  <div className="card-text pago-numero"><input type="text" className="fs-3" value={cambio_cop} onChange={(e)=>syncCambio(e.target.value,"Pesos")} placeholder="COP"/></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="align-middle text-right">
+                        Cambio
+                        <br/>
+                        <span className="text-success fs-2 fw-bold">
+                          {sumCambio()}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="d-flex justify-content-center">
               </div>
               <div className="d-flex justify-content-center p-2">
                 
@@ -689,7 +1043,11 @@ settipoTransferenciaPagar
                   {editable?
                   <button className="btn btn-circle text-white btn-sinapsis btn-xl me-1" onClick={()=>setToggleAddPersona(true)}>F2 <i className="fa fa-user"></i></button>
                   :null}
-                  <button className="btn btn-circle text-white btn-sinapsis btn-xl me-4" onClick={toggleImprimirTicket}>F3 <i className="fa fa-print"></i></button>
+
+                  {estado==1?
+                    <button className="btn btn-circle text-white btn-sinapsis btn-xl me-4" onClick={toggleImprimirTicket}>F3 <i className="fa fa-print"></i></button>
+                  :null}
+
                   <button className="btn btn-circle text-white btn-sinapsis btn-xl me-4" onClick={viewReportPedido}>F4 <i className="fa fa-eye"></i></button>
                   {editable?
                   <button className="btn btn-circle text-white btn-danger btn-sm" onClick={del_pedido}>F5 <i className="fa fa-times"></i></button>

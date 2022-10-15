@@ -14553,6 +14553,297 @@ function Pagar(_ref) {
       vuelto_pendcop = _useState6[0],
       setvuelto_pendcop = _useState6[1];
 
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState8 = _slicedToArray(_useState7, 2),
+      recibido_dolar = _useState8[0],
+      setrecibido_dolar = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState10 = _slicedToArray(_useState9, 2),
+      recibido_bs = _useState10[0],
+      setrecibido_bs = _useState10[1];
+
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState12 = _slicedToArray(_useState11, 2),
+      recibido_cop = _useState12[0],
+      setrecibido_cop = _useState12[1];
+
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState14 = _slicedToArray(_useState13, 2),
+      cambio_dolar = _useState14[0],
+      setcambio_dolar = _useState14[1];
+
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState16 = _slicedToArray(_useState15, 2),
+      cambio_bs = _useState16[0],
+      setcambio_bs = _useState16[1];
+
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState18 = _slicedToArray(_useState17, 2),
+      cambio_cop = _useState18[0],
+      setcambio_cop = _useState18[1];
+
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState20 = _slicedToArray(_useState19, 2),
+      cambio_tot = _useState20[0],
+      setcambio_tot = _useState20[1];
+
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState22 = _slicedToArray(_useState21, 2),
+      cambio_tot_result = _useState22[0],
+      setcambio_tot_result = _useState22[1];
+
+  var _useState23 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState24 = _slicedToArray(_useState23, 2),
+      recibido_tot = _useState24[0],
+      setrecibido_tot = _useState24[1];
+
+  var _useState25 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState26 = _slicedToArray(_useState25, 2),
+      pagoefec_dolar = _useState26[0],
+      setpagoefec_dolar = _useState26[1];
+
+  var _useState27 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState28 = _slicedToArray(_useState27, 2),
+      pagoefec_bs = _useState28[0],
+      setpagoefec_bs = _useState28[1];
+
+  var _useState29 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+      _useState30 = _slicedToArray(_useState29, 2),
+      pagoefec_cop = _useState30[0],
+      setpagoefec_cop = _useState30[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (refinputaddcarritofast.current) {
+      refinputaddcarritofast.current.value = "";
+    } // refinputaddcarritofast.current.focus()
+
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    sumRecibido();
+  }, [recibido_bs, recibido_cop, recibido_dolar]);
+
+  var changeRecibido = function changeRecibido(val, type) {
+    switch (type) {
+      case "recibido_dolar":
+        setrecibido_dolar(number(val));
+        break;
+
+      case "recibido_bs":
+        setrecibido_bs(number(val));
+        break;
+
+      case "recibido_cop":
+        setrecibido_cop(number(val));
+        break;
+    }
+  };
+
+  var sumRecibido = function sumRecibido() {
+    var vuel_dolar = parseFloat(recibido_dolar ? recibido_dolar : 0);
+    var vuel_bs = parseFloat(recibido_bs ? recibido_bs : 0) / parseFloat(dolar);
+    var vuel_cop = parseFloat(recibido_cop ? recibido_cop : 0) / parseFloat(peso);
+    var t = vuel_dolar + vuel_bs + vuel_cop;
+    var cambio_dolar = t - pedidoData.clean_total;
+    setrecibido_tot(t.toFixed(2));
+    setcambio_dolar(cambio_dolar.toFixed(2));
+    setcambio_bs("");
+    setcambio_cop("");
+    setcambio_tot_result(cambio_dolar.toFixed(2));
+  };
+
+  var setSubEfecbs = function setSubEfecbs() {
+    setpagoefec_bs((efectivo * dolar).toFixed(2));
+    setpagoefec_dolar("");
+    setpagoefec_cop("");
+  };
+
+  var setSubEfecdolar = function setSubEfecdolar() {
+    setpagoefec_bs("");
+    setpagoefec_dolar(efectivo);
+    setpagoefec_cop("");
+  };
+
+  var setSubEfeccop = function setSubEfeccop() {
+    setpagoefec_bs("");
+    setpagoefec_dolar("");
+    setpagoefec_cop((efectivo * peso).toFixed(2));
+  };
+
+  var setVueltobs = function setVueltobs() {
+    setcambio_bs((cambio_tot_result * dolar).toFixed(2));
+    setcambio_dolar("");
+    setcambio_cop("");
+  };
+
+  var setVueltodolar = function setVueltodolar() {
+    setcambio_bs("");
+    setcambio_dolar(cambio_tot_result);
+    setcambio_cop("");
+  };
+
+  var setVueltocop = function setVueltocop() {
+    setcambio_bs("");
+    setcambio_dolar("");
+    setcambio_cop((cambio_tot_result * peso).toFixed(2));
+  };
+
+  var changeCambio = function changeCambio(val, type) {
+    switch (type) {
+      case "cambio_dolar":
+        setcambio_dolar(number(val));
+        break;
+
+      case "cambio_bs":
+        setcambio_bs(number(val));
+        break;
+
+      case "cambio_cop":
+        setcambio_cop(number(val));
+        break;
+    }
+  };
+
+  var syncCambio = function syncCambio(val, type) {
+    val = number(val);
+    var valC = 0;
+
+    if (type == "Dolar") {
+      setcambio_dolar(val);
+      valC = val;
+    } else if (type == "Bolivares") {
+      setcambio_bs(val);
+      valC = parseFloat(val ? val : 0) / parseFloat(dolar);
+    } else if (type == "Pesos") {
+      setcambio_cop(val);
+      valC = parseFloat(val ? val : 0) / parseFloat(peso);
+    }
+
+    var divisor = 0;
+    var inputs = [{
+      key: "Dolar",
+      val: cambio_dolar,
+      set: function set(val) {
+        return setcambio_dolar(val);
+      }
+    }, {
+      key: "Bolivares",
+      val: cambio_bs,
+      set: function set(val) {
+        return setcambio_bs(val);
+      }
+    }, {
+      key: "Pesos",
+      val: cambio_cop,
+      set: function set(val) {
+        return setcambio_cop(val);
+      }
+    }];
+    inputs.map(function (e) {
+      if (e.key != type) {
+        if (e.val) {
+          divisor++;
+        }
+      }
+    });
+    var cambio_tot_resultvalC = 0;
+
+    if (cambio_bs && cambio_dolar && type == "Pesos") {
+      var bs = parseFloat(cambio_bs) / parseFloat(dolar);
+      setcambio_dolar((cambio_tot_result - bs - valC).toFixed(2));
+    } else {
+      inputs.map(function (e) {
+        if (e.key != type) {
+          if (e.val) {
+            cambio_tot_resultvalC = (cambio_tot_result - valC) / divisor;
+
+            if (e.key == "Dolar") {
+              e.set(cambio_tot_resultvalC.toFixed(2));
+            } else if (e.key == "Bolivares") {
+              e.set((cambio_tot_resultvalC * dolar).toFixed(2));
+            } else if (e.key == "Pesos") {
+              e.set((cambio_tot_resultvalC * peso).toFixed(2));
+            }
+          }
+        }
+      });
+    }
+  };
+
+  var syncPagoEfec = function syncPagoEfec(val, type) {
+    val = number(val);
+    var valC = 0;
+
+    if (type == "Dolar") {
+      setpagoefec_dolar(val);
+      valC = val;
+    } else if (type == "Bolivares") {
+      setpagoefec_bs(val);
+      valC = parseFloat(val ? val : 0) / parseFloat(dolar);
+    } else if (type == "Pesos") {
+      setpagoefec_cop(val);
+      valC = parseFloat(val ? val : 0) / parseFloat(peso);
+    }
+
+    var divisor = 0;
+    var inputs = [{
+      key: "Dolar",
+      val: pagoefec_dolar,
+      set: function set(val) {
+        return setpagoefec_dolar(val);
+      }
+    }, {
+      key: "Bolivares",
+      val: pagoefec_bs,
+      set: function set(val) {
+        return setpagoefec_bs(val);
+      }
+    }, {
+      key: "Pesos",
+      val: pagoefec_cop,
+      set: function set(val) {
+        return setpagoefec_cop(val);
+      }
+    }];
+    inputs.map(function (e) {
+      if (e.key != type) {
+        if (e.val) {
+          divisor++;
+        }
+      }
+    });
+    var efectivovalC = 0;
+
+    if (pagoefec_bs && pagoefec_dolar && type == "Pesos") {
+      var bs = parseFloat(pagoefec_bs) / parseFloat(dolar);
+      setpagoefec_dolar((efectivo - bs - valC).toFixed(2));
+      console.log("is pesos");
+    } else {
+      inputs.map(function (e) {
+        if (e.key != type) {
+          if (e.val) {
+            efectivovalC = (efectivo - valC) / divisor;
+
+            if (e.key == "Dolar") {
+              e.set(efectivovalC.toFixed(2));
+            } else if (e.key == "Bolivares") {
+              e.set((efectivovalC * dolar).toFixed(2));
+            } else if (e.key == "Pesos") {
+              e.set((efectivovalC * peso).toFixed(2));
+            }
+          }
+        }
+      });
+    }
+  };
+
+  var sumCambio = function sumCambio() {
+    var vuel_dolar = parseFloat(cambio_dolar ? cambio_dolar : 0);
+    var vuel_bs = parseFloat(cambio_bs ? cambio_bs : 0) / parseFloat(dolar);
+    var vuel_cop = parseFloat(cambio_cop ? cambio_cop : 0) / parseFloat(peso);
+    return (vuel_dolar + vuel_bs + vuel_cop).toFixed(2);
+  };
+
   var debitoBs = function debitoBs(met) {
     try {
       if (met == "debito") {
@@ -14641,13 +14932,6 @@ function Pagar(_ref) {
       });
     }
   };
-
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    if (refinputaddcarritofast.current) {
-      refinputaddcarritofast.current.value = "";
-    } // refinputaddcarritofast.current.focus()
-
-  }, []);
 
   try {
     var id = pedidoData.id,
@@ -15365,6 +15649,187 @@ function Pagar(_ref) {
                 })
               })
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+              className: "d-flex justify-content-center",
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("table", {
+                className: "table",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tbody", {
+                  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("td", {
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                        className: "container-fluid",
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                          className: "row",
+                          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (recibido_dolar != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer",
+                                  children: "$"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: recibido_dolar,
+                                    onChange: function onChange(e) {
+                                      return changeRecibido(e.target.value, "recibido_dolar");
+                                    },
+                                    placeholder: "$"
+                                  })
+                                })]
+                              })
+                            })
+                          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (recibido_bs != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer",
+                                  children: "BS"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: recibido_bs,
+                                    onChange: function onChange(e) {
+                                      return changeRecibido(e.target.value, "recibido_bs");
+                                    },
+                                    placeholder: "BS"
+                                  })
+                                })]
+                              })
+                            })
+                          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (recibido_cop != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer",
+                                  children: "COP"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: recibido_cop,
+                                    onChange: function onChange(e) {
+                                      return changeRecibido(e.target.value, "recibido_cop");
+                                    },
+                                    placeholder: "COP"
+                                  })
+                                })]
+                              })
+                            })
+                          })]
+                        })
+                      })
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("td", {
+                      className: "align-middle text-right",
+                      children: ["Pagado", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
+                        className: "text-success fs-2 fw-bold",
+                        children: recibido_tot
+                      })]
+                    })]
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
+                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("td", {
+                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                        className: "container-fluid",
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                          className: "row",
+                          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (cambio_dolar != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer ",
+                                  onClick: setVueltodolar,
+                                  children: "$"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: cambio_dolar,
+                                    onChange: function onChange(e) {
+                                      return syncCambio(e.target.value, "Dolar");
+                                    },
+                                    placeholder: "$"
+                                  })
+                                })]
+                              })
+                            })
+                          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (cambio_bs != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer ",
+                                  onClick: setVueltobs,
+                                  children: "BS"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: cambio_bs,
+                                    onChange: function onChange(e) {
+                                      return syncCambio(e.target.value, "Bolivares");
+                                    },
+                                    placeholder: "BS"
+                                  })
+                                })]
+                              })
+                            })
+                          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                            className: "col p-0",
+                            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                              className: (cambio_cop != "" ? "bg-success-light card-sinapsis addref" : "t-5") + " card",
+                              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+                                className: "card-body",
+                                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-title pointer ",
+                                  onClick: setVueltocop,
+                                  children: "COP"
+                                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
+                                  className: "card-text pago-numero",
+                                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", {
+                                    type: "text",
+                                    className: "fs-3",
+                                    value: cambio_cop,
+                                    onChange: function onChange(e) {
+                                      return syncCambio(e.target.value, "Pesos");
+                                    },
+                                    placeholder: "COP"
+                                  })
+                                })]
+                              })
+                            })
+                          })]
+                        })
+                      })
+                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("td", {
+                      className: "align-middle text-right",
+                      children: ["Cambio", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
+                        className: "text-success fs-2 fw-bold",
+                        children: sumCambio()
+                      })]
+                    })]
+                  })]
+                })
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
               className: "d-flex justify-content-center"
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
               className: "d-flex justify-content-center p-2",
@@ -15394,13 +15859,13 @@ function Pagar(_ref) {
                   children: ["F2 ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("i", {
                     className: "fa fa-user"
                   })]
-                }) : null, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
+                }) : null, estado == 1 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
                   className: "btn btn-circle text-white btn-sinapsis btn-xl me-4",
                   onClick: toggleImprimirTicket,
                   children: ["F3 ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("i", {
                     className: "fa fa-print"
                   })]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
+                }) : null, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("button", {
                   className: "btn btn-circle text-white btn-sinapsis btn-xl me-4",
                   onClick: viewReportPedido,
                   children: ["F4 ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("i", {
