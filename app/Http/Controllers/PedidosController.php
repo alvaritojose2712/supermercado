@@ -34,7 +34,7 @@ class PedidosController extends Controller
 {   
 
     protected $sends = [
-        "yanethkarismar@gmail.com",           
+        "@gmail.com",           
         "alvaroospino79@gmail.com",           
     ];
     protected  $letras = [
@@ -406,6 +406,11 @@ class PedidosController extends Controller
            
             $estado = $pedido->estado;
             $last_cierre = cierres::orderBy("fecha","desc")->first();
+
+
+            if ($estado==1 && session("tipo_usuario")==4) {
+                return false;
+            }
         }
 
        //Si no se ha pagado
