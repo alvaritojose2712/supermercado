@@ -68,6 +68,7 @@ toggleImprimirTicket,
 onchangeinputmain,
 del_pedido,
 
+
 productos,
 getProductos,
 facturar_pedido,
@@ -97,6 +98,8 @@ setclienteInpdireccion,
 inputaddCarritoFast,
 setinputaddCarritoFast,
 refinputaddcarritofast,
+
+refaddfast,
 
 viewReportPedido,
 autoCorrector,
@@ -144,6 +147,10 @@ settipoTransferenciaPagar
   useEffect(()=>{
     if (refinputaddcarritofast.current) {
       refinputaddcarritofast.current.value = ""
+
+    }
+    if (refaddfast.current) {
+      refaddfast.current.value = ""
 
     }
     // refinputaddcarritofast.current.focus()
@@ -591,6 +598,16 @@ settipoTransferenciaPagar
               <table className="table table-striped text-center">
                 <thead>
                   <tr>
+                    <td colSpan="7">
+                        <div className="input-group">
+                          <input type="text" ref={refaddfast} className="fs-2 form-control form-control-lg" placeholder="Auto agregar...(F1)"/>
+                          <div className="input-group-append">
+                            <button className="btn text-white btn-sinapsis h-100 fs-2" onClick={toggleModalProductos}><i className="fa fa-plus"></i></button>
+                          </div>
+                        </div>
+                    </td>
+                  </tr>
+                  <tr>
                     <th className="text-sinapsis cell2">Código</th>
                     <th className="text-sinapsis cell3">Producto</th>
                     <th className="text-sinapsis cell1">Cant.</th>
@@ -602,9 +619,10 @@ settipoTransferenciaPagar
                     */}
                     <th className="text-sinapsis cell2">Total</th>
                     {editable?
-                    <th className='cell1'><button className="btn btn-circle text-white btn-sinapsis btn-sm" onClick={toggleModalProductos}>F1 <i className="fa fa-plus"></i></button></th>
+                    <th className='cell1'></th>
                     :null}
                   </tr>
+                  
                 </thead>
                 <tbody>
                   {items?items.map((e,i)=>

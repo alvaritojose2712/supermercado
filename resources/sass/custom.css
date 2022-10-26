@@ -15,7 +15,7 @@
   --sinapsis-color-select : rgba(221,143,79,0.75); */
 
   /*Verde*/
-  --sinapsis-color : #216234;
+  --sinapsis-color : #7cb300;
   --sinapsis-color-light : #e4ffe5;
   --sinapsis-color-select : #9cd6b1; 
 
@@ -149,7 +149,7 @@ td,th{
   z-index: 99999999;
 }
 .logo{
-  width:  90px;
+  width:  250px;
 }
 
 .card-pedidos{

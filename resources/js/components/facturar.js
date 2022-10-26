@@ -230,6 +230,8 @@ export default function Facturar({user,notificar,setLoading}) {
   const inputaddcarritointernoref = useRef(null)
 
   const refinputaddcarritofast = useRef(null)
+  const refaddfast = useRef(null)
+
 
 
 
@@ -398,12 +400,19 @@ useHotkeys("tab",()=>{
   },[view,selectItem])
   useHotkeys('f1', () => {
     if(view=="pagar"){
-      toggleModalProductos(true,()=>{
-        inputaddcarritointernoref.current.focus()
-        setQProductosMain("")
-        setCountListInter(0)
+      // toggleModalProductos(true,()=>{
+      //   inputaddcarritointernoref.current.focus()
+      //   setQProductosMain("")
+      //   setCountListInter(0)
 
-      })
+      // })
+      try{
+        if (refaddfast) {
+          if (refaddfast.current) {
+            refaddfast.current.focus()
+          }
+        }
+      }catch(err){}
       
     }else if(selectItem===null && view=="seleccionar"){
       getPedido("ultimo",()=>{
@@ -644,58 +653,65 @@ useHotkeys("tab",()=>{
 
   }, [view, counterListProductos, countListInter, countListPersoInter, subViewInventario, modViewInventario]);
   useHotkeys('enter', event => {
-    
-    if(typeof(selectItem)!="number"&&view=="seleccionar"){
-      try{
-        if (tbodyproductosref.current) {
-          let tr = tbodyproductosref.current.rows[counterListProductos]
-          let index = tr.attributes["data-index"].value
-          if (permisoExecuteEnter) {
-            if (productos[index]) {
-              if (!productos[index].lotes.length) {
-                addCarrito(index)
+    try{
+
+      if(typeof(selectItem)!="number"&&view=="seleccionar"){
+        try{
+          if (tbodyproductosref.current) {
+            let tr = tbodyproductosref.current.rows[counterListProductos]
+            let index = tr.attributes["data-index"].value
+            if (permisoExecuteEnter) {
+              if (productos[index]) {
+                if (!productos[index].lotes.length) {
+                  addCarrito(index)
+                }
+              }
+              // console.log("Execute Enter")
+            }
+            //wait
+          }
+
+        }catch(err){}
+        
+      }else if(typeof(selectItem)=="number"&&view=="seleccionar"&&productos[selectItem]){
+        addCarritoRequest("agregar")
+      }else if(view=="pagar"){
+        if (ModaladdproductocarritoToggle) {
+          if (tbodyproducInterref.current.rows[countListInter]) {
+            if (permisoExecuteEnter) {
+              setProductoCarritoInterno(tbodyproducInterref.current.rows[countListInter].attributes["data-index"].value)
+              // console.log("Execute Enter")
+
+            }
+            //wait
+          }
+        }else if(toggleAddPersona){
+          if (tbodypersoInterref) {
+            if (tbodypersoInterref.current) {
+              if (tbodypersoInterref.current.rows[countListPersoInter]) {
+                if (tbodypersoInterref.current.rows[countListPersoInter].attributes["data-index"]) {
+                  setPersonas(tbodypersoInterref.current.rows[countListPersoInter].attributes["data-index"].value)
+
+                }
               }
             }
-            // console.log("Execute Enter")
           }
-          //wait
-        }
-
-      }catch(err){}
-      
-    }else if(typeof(selectItem)=="number"&&view=="seleccionar"&&productos[selectItem]){
-      addCarritoRequest("agregar")
-    }else if(view=="pagar"){
-      if (ModaladdproductocarritoToggle) {
-        if (tbodyproducInterref.current.rows[countListInter]) {
-          if (permisoExecuteEnter) {
-            setProductoCarritoInterno(tbodyproducInterref.current.rows[countListInter].attributes["data-index"].value)
-            // console.log("Execute Enter")
-
-          }
-          //wait
-        }
-      }else if(toggleAddPersona){
-        if (tbodypersoInterref) {
-          if (tbodypersoInterref.current) {
-            if (tbodypersoInterref.current.rows[countListPersoInter]) {
-              if (tbodypersoInterref.current.rows[countListPersoInter].attributes["data-index"]) {
-                setPersonas(tbodypersoInterref.current.rows[countListPersoInter].attributes["data-index"].value)
-
-              }
-            }
+        }else{
+          if (viewconfigcredito) {
+            setPagoPedido()
+          } else if(document.activeElement===refaddfast.current){
+            addCarritoFast()
+          } else {
+            facturar_pedido()
           }
         }
-      }else{
-        if (viewconfigcredito) {
-          setPagoPedido()
-        } else {
-          facturar_pedido()
-        }
+      }else if (view == "inventario" && subViewInventario == "inventario" && modViewInventario == "list") {
+        focusInputSibli(event.target,1)
       }
-    } else if (view == "inventario" && subViewInventario == "inventario" && modViewInventario == "list") {
-      focusInputSibli(event.target,1)
+    }catch(err){
+      console.log(err)
     }
+
   },{
     filterPreventDefault:false,
     enableOnTags:["INPUT", "SELECT","TEXTAREA"],
@@ -1117,6 +1133,7 @@ const getEstaInventario = () => {
   setTypingTimeout(time)
 
 }
+
 const setporcenganancia = (tipo,base=0,fun=null) => {
   let insert = window.prompt("Porcentaje")
   if (insert) {
@@ -2836,33 +2853,20 @@ const sumPedidos = e => {
 }
 const addCarritoFast = () => {
   if (pedidoData.id) {
-    if (time!=0) {
-      clearTimeout(typingTimeout)
-    }
-
-    let time = window.setTimeout(()=>{
-      
-
-    db.getinventario({exacto:"si",num:1,itemCero:true,qProductosMain:inputaddCarritoFast,orderColumn:"id",orderBy:"desc"}).then(res=>{
-      if(res.data.length==1){
-        let id = res.data[0].id
-       db.setCarrito({id,type:null,cantidad:1,numero_factura:pedidoData.id}).then(res=>{
-        setinputaddCarritoFast("")
-        getPedido()
-       })
-
+    if (refaddfast) {
+      if (refaddfast.current) {
+        db.getinventario({exacto:"si",num:1,itemCero:true,qProductosMain:refaddfast.current.value,orderColumn:"id",orderBy:"desc"}).then(res=>{
+          if(res.data.length==1){
+            let id = res.data[0].id
+            db.setCarrito({id,type:null,cantidad:1,numero_factura:pedidoData.id}).then(res=>{
+              refaddfast.current.value=""
+              getPedido()
+            })
+          }
+        })
       }
-    })
-
-
-    },100)
-    setTypingTimeout(time)
-
-    
-
-
+    }
   }
-  
 } 
 const getFallas = () => {
   setLoading(true)
@@ -3994,6 +3998,7 @@ const auth = permiso => {
         
         />:null}
         {view=="pagar"?<Pagar
+
           tipoTransferenciaPagar={tipoTransferenciaPagar} 
           settipoTransferenciaPagar={settipoTransferenciaPagar} 
           changeEntregado={changeEntregado}
@@ -4102,6 +4107,7 @@ const auth = permiso => {
           setinputaddCarritoFast={setinputaddCarritoFast}
           addCarritoFast={addCarritoFast}
           refinputaddcarritofast={refinputaddcarritofast}
+          refaddfast={refaddfast}
 
           autoCorrector={autoCorrector}
           setautoCorrector={setautoCorrector}

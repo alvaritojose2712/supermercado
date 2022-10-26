@@ -174,8 +174,8 @@ class InventarioController extends Controller
                 if ($checkIfExits) {
                     $old_ct = $checkIfExits["cantidad"];
 
-                    // $setcantidad = $cantidad + $old_ct; //Sumar cantidad a lo que ya existe
-                    $setcantidad = $cantidad;
+                    $setcantidad = $cantidad + $old_ct; //Sumar cantidad a lo que ya existe
+                    //$setcantidad = $cantidad;
                     $setprecio = $setcantidad*$precio;
                 }else{
                     $setprecio = $setcantidad*$precio;
@@ -701,16 +701,15 @@ class InventarioController extends Controller
         try {
 
             $i = inventario::find($id);
-            
-            $this->setMovimientoNotCliente(null,$i->descripcion,$i->cantidad,$i->precio,"Eliminación de Producto");
+                      $this->setMovimientoNotCliente(null,$i->descripcion,$i->cantidad,$i->precio,"Eliminación de Producto");//
 
             
             $i->delete();
             return true;   
         } catch (\Exception $e) {
             throw new \Exception("Error al eliminar. ".$e->getMessage(), 1);
-            
-        }
+         
+        }//
     }
     public function delProducto(Request $req)
     {
