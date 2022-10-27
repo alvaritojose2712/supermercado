@@ -142,22 +142,13 @@ class tickera extends Controller
                 $printer -> text("\n");
                 $printer -> text($sucursal->rif);
                 $printer -> text("\n");
-                $printer -> text($sucursal->telefono1." | ".$sucursal->telefono2);
+                $printer -> text($sucursal->telefono1." | ORDEN #".$pedido->id);
                 $printer -> text("\n");
 
                 $printer -> setTextSize(1,1);
 
-                $printer->setEmphasis(true);
 
-                
-               
-                $printer -> text("\n");
-                $printer->text($sucursal->sucursal);
-                $printer -> text("\n");
-                $printer->text("NOTA DE ENTREGA #".$pedido->id);
-                $printer->setEmphasis(false);
 
-                $printer -> text("\n");
                 $printer -> text("\n");
 
                 if ($nombres!="") {
@@ -225,15 +216,13 @@ class tickera extends Controller
                    $printer->text("\n");
 
 
-                   $printer->text(addSpaces("P/U. ",6).$item['pu']);
-                   $printer->text("\n");
+                   $printer->text(addSpaces("P/U.",6).$item['pu']);
                    
                    $printer->setEmphasis(true);
-                   $printer->text(addSpaces("Ct. ",6).$item['cantidad']);
+                   $printer->text(addSpaces("Ct.",6).$item['cantidad']);
                    $printer->setEmphasis(false);
-                   $printer->text("\n");
 
-                   $printer->text(addSpaces("Tot. ",6).$item['totalprecio']);
+                   $printer->text(addSpaces("Tot.",6).$item['totalprecio']);
                    $printer->text("\n");
 
 
@@ -257,9 +246,6 @@ class tickera extends Controller
 
                 $printer->text("Creado: ".$pedido->created_at);
                 
-                $printer->text("\n");
-                $printer->text("¡Muchas gracias por su compra!");
-                $printer->text("\n");
                 $printer->text("\n");
                 $printer->text("\n");
 
