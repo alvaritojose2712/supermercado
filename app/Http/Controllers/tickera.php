@@ -216,7 +216,7 @@ class tickera extends Controller
                    $printer->text("\n");
 
 
-                   $printer->text(addSpaces("P/U.".$item['pu'],8));
+                   $printer->text(addSpaces("PU.".$item['pu'],8));
                    
                    $printer->setEmphasis(true);
                    $printer->text(addSpaces("Ct.".$item['cantidad'],8));
