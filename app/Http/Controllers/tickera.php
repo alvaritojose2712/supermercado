@@ -60,20 +60,13 @@ class tickera extends Controller
                 $printer = $req->printer-1;
             }
             
-            
-            $connector = new WindowsPrintConnector($sucursal->tickera);
-            //smb://computer/printer
+            $connector = new WindowsPrintConnector($arr_printers[$printer]);//smb://computer/printer
             $printer = new Printer($connector);
             $printer->setEmphasis(true);
 
-            $nombres = "";
-            $identificacion = "";
-            if (isset($req->nombres)) {
-                $nombres = $req->nombres;
-            }
-            if (isset($req->identificacion)) {
-                $identificacion = $req->identificacion;
-            }
+                $nombres = $pedido["cliente"]["nombre"];
+                $identificacion = $pedido["cliente"]["identificacion"];
+            
 
             if ($nombres=="precio" && $identificacion=="precio") {
                 if($pedido->items){

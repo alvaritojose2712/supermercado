@@ -1478,27 +1478,30 @@ const toggleModalProductos = (prop,callback=null) => {
   }
   if (callback) {callback()}
 }
-const toggleImprimirTicket = () => {
+const [selectprinter,setselectprinter] = useState(1)
+const toggleImprimirTicket = (id_fake=null) => {
   if (pedidoData) {
+    let printer = window.prompt("Número de impresora donde desea imprimir (La que seleccione se guardará por ésta sesión). 1 | 2 ",selectprinter)
     let moneda = window.prompt("Moneda: $ | bs | cop","bs")
-    let identificacion = window.prompt("Identificación", pedidoData.cliente.identificacion)
 
-    if (identificacion) {
-      let nombres = window.prompt("Nombre y Apellido",pedidoData.cliente.nombre)
-      if (nombres) {
+      // let printer = 1
+      // if (selectprinter) {
+      //   printer = selectprinter
+      // }else{
+        setselectprinter(printer)
+      //}
 
         console.log("Imprimiendo...")
 
         db.imprimirTicked({
-          id: pedidoData.id,
-          identificacion,
-          nombres,
+          id: id_fake ?id_fake:pedidoData.id,
           moneda,
+          printer
         }).then(res=>{
           notificar(res)
         })
-      }
-    }
+      
+
     
   }
 }
