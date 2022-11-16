@@ -32,7 +32,7 @@ use App\Http\Controllers\GastosController;
 Route::get('getip', [sendCentral::class,"getip"]);
 Route::get('/backup', function () {
 
-    Artisan::call('backup:run',['--only-db' => true]);
+    \Illuminate\Support\Facades\Artisan::call('backup:run');
 
     return 'Copia de seguridad completada!';
 

@@ -1468,15 +1468,15 @@ const getMoneda = () => {
   })
 }
 const toggleModalProductos = (prop,callback=null) => {
-  setModaladdproductocarritoToggle(prop)
-  if (inputaddcarritointernoref) {
-    if (inputaddcarritointernoref.current){
-      inputaddcarritointernoref.current.focus()
+  //setModaladdproductocarritoToggle(prop)
+//  if (inputaddcarritointernoref) {
+//    if (inputaddcarritointernoref.current){
+//      inputaddcarritointernoref.current.focus()//
 
-    }
-    
-  }
-  if (callback) {callback()}
+//    }
+//    
+//  }
+//  if (callback) {callback()}
 }
 const [selectprinter,setselectprinter] = useState(1)
 const toggleImprimirTicket = (id_fake=null) => {

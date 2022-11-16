@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 
-import Modaladdproductocarrito from '../components/Modaladdproductocarrito';
+//import Modaladdproductocarrito from '../components/Modaladdproductocarrito';
 import ModaladdPersona from '../components/ModaladdPersona';
 import Modalconfigcredito from '../components/Modalconfigcredito';
 
@@ -144,16 +144,11 @@ settipoTransferenciaPagar
   const [pagoefec_bs, setpagoefec_bs] = useState("")
   const [pagoefec_cop, setpagoefec_cop] = useState("")
 
-  useEffect(()=>{
-    if (refinputaddcarritofast.current) {
-      refinputaddcarritofast.current.value = ""
-
-    }
+  useEffect(()=>{    
     if (refaddfast.current) {
       refaddfast.current.value = ""
 
     }
-    // refinputaddcarritofast.current.focus()
   },[])
 
 
@@ -553,7 +548,7 @@ settipoTransferenciaPagar
             </div>
             <div className="col">
               
-              {ModaladdproductocarritoToggle&&<Modaladdproductocarrito 
+{/*              {ModaladdproductocarritoToggle&&<Modaladdproductocarrito 
                 qProductosMain={qProductosMain}
                 showinputaddCarritoFast={showinputaddCarritoFast}
                 setshowinputaddCarritoFast={setshowinputaddCarritoFast}
@@ -574,7 +569,7 @@ settipoTransferenciaPagar
                 orderBy={orderBy}
 
 
-              />}
+              />}*/}
 
               {toggleAddPersona&&<ModaladdPersona 
                 setToggleAddPersona={setToggleAddPersona}
@@ -602,7 +597,7 @@ settipoTransferenciaPagar
                         <div className="input-group">
                           <input type="text" ref={refaddfast} className="fs-2 form-control form-control-lg" placeholder="Auto agregar...(F1)"/>
                           <div className="input-group-append">
-                            <button className="btn text-white btn-sinapsis h-100 fs-2" onClick={toggleModalProductos}><i className="fa fa-plus"></i></button>
+                            <button className="btn text-white btn-sinapsis h-100 fs-2"><i className="fa fa-plus"></i></button>
                           </div>
                         </div>
                     </td>
