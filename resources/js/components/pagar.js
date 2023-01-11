@@ -7,6 +7,8 @@ import Modalconfigcredito from '../components/Modalconfigcredito';
 
 
 export default function Pagar({
+printprecio,
+setprintprecio,
 changeEntregado,
 setPagoPedido,
 viewconfigcredito,
@@ -1062,9 +1064,14 @@ settipoTransferenciaPagar
                   :null}
 
                   <button className="btn btn-circle text-white btn-sinapsis btn-xl me-4" onClick={viewReportPedido}>F4 <i className="fa fa-eye"></i></button>
+                  <button className={(printprecio?"btn-success":"btn-secondary")+(" btn btn-circle text-white btn-sm me-4")} onClick={()=>setprintprecio(!printprecio)}>Precio {printprecio?"Sí":"No"}</button>
                   {editable?
                   <button className="btn btn-circle text-white btn-danger btn-sm" onClick={del_pedido}>F5 <i className="fa fa-times"></i></button>
                   :null}
+                  <br/>
+                
+
+
                 </div>
               </div>
             </div>

@@ -45,6 +45,7 @@ export default function Facturar({user,notificar,setLoading}) {
 
   
 
+  const [printprecio, setprintprecio] = useState(true)
 
   const [tipoTransferenciaPagar, settipoTransferenciaPagar] = useState("")
   const [dropprintprice, setdropprintprice] = useState(false)
@@ -1491,15 +1492,18 @@ const toggleImprimirTicket = (id_fake=null) => {
         setselectprinter(printer)
       //}
 
-        console.log("Imprimiendo...")
+        if (printer && moneda) {
+          console.log("Imprimiendo...")
 
-        db.imprimirTicked({
-          id: id_fake ?id_fake:pedidoData.id,
-          moneda,
-          printer
-        }).then(res=>{
-          notificar(res)
-        })
+          db.imprimirTicked({
+            id: id_fake ?id_fake:pedidoData.id,
+            moneda,
+            printer,
+            printprecio,
+          }).then(res=>{
+            notificar(res)
+          })
+        }
       
 
     
@@ -4001,7 +4005,8 @@ const auth = permiso => {
         
         />:null}
         {view=="pagar"?<Pagar
-
+          printprecio={printprecio}
+          setprintprecio={setprintprecio}
           tipoTransferenciaPagar={tipoTransferenciaPagar} 
           settipoTransferenciaPagar={settipoTransferenciaPagar} 
           changeEntregado={changeEntregado}

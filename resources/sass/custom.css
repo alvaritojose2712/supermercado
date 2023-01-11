@@ -149,7 +149,7 @@ td,th{
   z-index: 99999999;
 }
 .logo{
-  width:  250px;
+  width:  150px;
 }
 
 .card-pedidos{
@@ -327,7 +327,7 @@ body{
   text-align: right;
 }
 .monto-header {
-    color: rgb(249, 212, 185);
+    color: white;
 }
 .card-success-pago{
    margin-bottom: 1em;

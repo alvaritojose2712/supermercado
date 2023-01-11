@@ -212,10 +212,13 @@ class tickera extends Controller
                    $printer->text(addSpaces("Ct ".$item['cantidad'],9));
                    $printer->setEmphasis(false);
 
-                   $printer->text(addSpaces("PU ".$item['pu'],11));
-                   
+                    if ($req->printprecio) {
+                       $printer->text(addSpaces("PU ".$item['pu'],11));
+                       $printer->text(addSpaces("To ".$item['totalprecio'],12));
+                    }else{
 
-                   $printer->text(addSpaces("To ".$item['totalprecio'],12));
+                    }
+
                    $printer->text("\n");
 
 
@@ -225,17 +228,20 @@ class tickera extends Controller
                 $printer->setEmphasis(true);
 
 
-
-                $printer->text("Desc: ".$pedido->total_des);
-                $printer->text("\n");
-                $printer->text("Sub-Total: ". number_format($pedido->clean_total/1.16,2) );
-                $printer->text("\n");
-                $printer->text("Monto IVA 16%: ".number_format($pedido->clean_total*.16,2));
-                $printer->text("\n");
-                $printer->text("Total: ".$pedido->total);
-                $printer->text("\n");
-                $printer->text("\n");
-                    $printer->setJustification(Printer::JUSTIFY_CENTER);
+                if ($req->printprecio) {
+                    $printer->text("Desc: ".$pedido->total_des);
+                    $printer->text("\n");
+                    $printer->text("Sub-Total: ". number_format($pedido->clean_total/1.16,2) );
+                    $printer->text("\n");
+                    $printer->text("Monto IVA 16%: ".number_format($pedido->clean_total*.16,2));
+                    $printer->text("\n");
+                    $printer->text("Total: ".$pedido->total);
+                    $printer->text("\n");
+                    $printer->text("\n");
+                }else{
+                    
+                }
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
 
                 $printer->text("Creado: ".$pedido->created_at);
                 
