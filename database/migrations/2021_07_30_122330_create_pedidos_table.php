@@ -25,7 +25,8 @@ class CreatePedidosTable extends Migration
             //Parcial o completo
             //0 Parcial
             //1 Completo
-
+            
+            $table->boolean("ticked")->default(0);
 
             $table->integer("id_cliente")->unsigned();
             $table->foreign('id_cliente')->references('id')->on('clientes');

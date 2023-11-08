@@ -12,6 +12,15 @@ use Response;
 
 class UsuariosController extends Controller
 {
+    public function isAdmin()
+    {
+        $tipo = session("tipo_usuario");
+        if ($tipo==1) {
+            return true;
+        }else{
+            return false;
+        }
+    }
     public function setUsuario(Request $req)
     {
         try {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\moneda;
 use Illuminate\Http\Request;
 use Response;
+use Session;
 
 use Illuminate\Support\Facades\Cache;
 class MonedaController extends Controller
@@ -30,6 +31,8 @@ class MonedaController extends Controller
         Cache::forget('bs');
         Cache::forget('cop');
     }
+
+    
     
     
 }

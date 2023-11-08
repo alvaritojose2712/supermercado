@@ -34,6 +34,8 @@ class CreatePagoPedidosTable extends Migration
             ->onUpdate('cascade');
 
             $table->timestamps();
+
+            $table->unique(["tipo","id_pedido"]);
         });
     }
 

@@ -8,6 +8,7 @@ use App\Models\sucursal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Response;
+use Session;
 
 class HomeController extends Controller
 {
@@ -117,6 +118,9 @@ class HomeController extends Controller
                 $query->orWhere('usuario', $req->usuario);
             })
             ->first();
+        
+
+            $sucursal = sucursal::all()->first();
             
             if ($d&&Hash::check($req->clave, $d->clave)) {
                 $arr_session =  [
@@ -126,9 +130,10 @@ class HomeController extends Controller
                     "role" => $this->role($d->tipo_usuario),
                     "usuario" => $d->usuario,
                     "nombre" => $d->nombre,
+                    "sucursal" => $sucursal->codigo,
+                    "iscentral" => $sucursal->iscentral,
                 ];
                 session($arr_session);
-                
                 $estado = $this->selectRedirect();
             }else{
                 throw new \Exception("¡Datos Incorrectos!", 1);
@@ -139,65 +144,11 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             return Response::json(["msj"=>"Error: ".$e->getMessage(),"estado"=>false]);
         }
-        
-        
-        return Response::json(["estado"=>$estado,"user"=>$d]);
        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function closeAllSession(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\home  $home
-     * @return \Illuminate\Http\Response
-     */
-    public function show(home $home)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\home  $home
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(home $home)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\home  $home
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, home $home)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\home  $home
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(home $home)
-    {
-        //
+        //Session::flush();
     }
 }

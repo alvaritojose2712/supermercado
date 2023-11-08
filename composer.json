@@ -6,12 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "barryvdh/laravel-dompdf": "^2.0",
+        "beyondcode/laravel-websockets": "^1.14",
+        "doctrine/dbal": "^3.6",
         "fideloper/proxy": "^4.4",
-        "fruitcake/laravel-cors": "^2.0",
+        "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.4",
-        "laravel/framework": "^8.40",
+        "laravel/framework": "^8.65",
         "laravel/tinker": "^2.5",
         "mike42/escpos-php": "^3.0",
+        "pusher/pusher-php-server": "7.0",
         "spatie/laravel-backup": "*"
     },
     "require-dev": {

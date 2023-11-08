@@ -97,18 +97,18 @@
 
 					<tr>
 						<td class="text-right" colspan="4">Sub-total:</td>
-						<th class="text-right" colspan="">{{number_format($subtotal)}}</th>
+						<th class="text-right" colspan="">{{number_format($subtotal,2)}}</th>
 					</tr>
 
 					<tr>
 						<td class="text-right" colspan="4">Descuento:</td>
-						<th class="text-right" colspan="">{{number_format($total_des)}}</th>
+						<th class="text-right" colspan="">{{number_format($total_des,2)}}</th>
 					</tr>
 					
 					
 					<tr>
 						<td class="text-right" colspan="4">Total:</td>
-						<th class="text-right" colspan="">{{number_format($total)}}</th>
+						<th class="text-right" colspan="">{{number_format($total,2)}}</th>
 					</tr>
 				</tbody>
 

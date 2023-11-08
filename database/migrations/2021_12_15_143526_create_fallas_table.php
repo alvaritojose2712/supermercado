@@ -19,6 +19,7 @@ class CreateFallasTable extends Migration
             $table->integer("id_producto")->unsigned()->unique();
             $table->foreign('id_producto')->references('id')->on('inventarios')->onDelete("cascade");
             $table->decimal("cantidad",6,2)->nullable();
+            $table->boolean("push")->default(0);
 
             $table->timestamps();
         });

@@ -477,11 +477,10 @@ function ModalSelectFactura({
                           <th>Cod.</th>
                           <th>Alterno.</th>
                           <th>Descripción</th>
-                          <th className="">Base</th>
-                          <th className="">Total Base</th>
-
-                          <th>Venta</th>
-                          <th className="">Total Venta</th>
+                          <th className="text-right">Base</th>
+                          <th className="text-right">Total Base</th>
+                          <th className="text-right">Venta</th>
+                          <th className="text-right">Total Venta</th>
                           <th></th>
                         </tr>
                       </thead>

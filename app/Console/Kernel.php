@@ -35,7 +35,8 @@ class Kernel extends ConsoleKernel
         // $schedule->call("App\Http\Controllers\sendCentral@setVentas")->hourly();
 
         // $schedule->command('database:backup')->daily();
-        $schedule->command('backup:run')->daily()->at('12:00');
+
+        $schedule->command('database:backup')->twiceDaily(8, 18);
         
     }
 

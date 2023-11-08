@@ -26,6 +26,8 @@ class CreateSucursalsTable extends Migration
             $table->string("correo");
             $table->string("nombre_registro");
             $table->string("rif");
+            $table->boolean("iscentral")->default(0);
+
 
             $table->string("tickera")->nullable();
             $table->string("fiscal")->nullable();
@@ -38,6 +40,20 @@ class CreateSucursalsTable extends Migration
 
             $table->timestamps();
         });
+
+        DB::table("sucursals")->insert([
+            [
+                "sucursal" => "aaa",
+                "codigo" => "ARAMCAL",
+                "direccion_registro" => "aaa",
+                "direccion_sucursal" => "aaa",
+                "telefono1" => "aaa",
+                "telefono2" => "aaa",
+                "correo" => "aaa",
+                "nombre_registro" => "aaa",
+                "rif" => "aaa",
+            ],
+        ]);
     }
 
     /**

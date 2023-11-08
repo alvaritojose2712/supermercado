@@ -17,4 +17,7 @@ class movimientos extends Model
      public function items() { 
         return $this->hasMany('App\Models\items_movimiento',"id_movimiento","id"); 
     }
+    public function usuario() { 
+        return $this->hasOne(\App\Models\usuarios::class,"id","id_usuario"); 
+    }
 }

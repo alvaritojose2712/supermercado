@@ -21,7 +21,6 @@ class tickera extends Controller
     public function imprimir(Request $req)
     {
 
-        //return gethostname();
         function addSpaces($string = '', $valid_string_length = 0) {
             if (strlen($string) < $valid_string_length) {
                 $spaces = $valid_string_length - strlen($string);
@@ -53,46 +52,34 @@ class tickera extends Controller
         $fecha_emision = date("Y-m-d H:i:s");
 
         try {
-            $arr_printers = explode(";", $sucursal->tickera);
-            $printer = 1;
-
-            if ($req->printer) {
-                $printer = $req->printer-1;
-            }
             
-            $connector = new WindowsPrintConnector($arr_printers[$printer]);//smb://computer/printer
+            $connector = new WindowsPrintConnector($sucursal->tickera);
+            //smb://computer/printer
             $printer = new Printer($connector);
             $printer->setEmphasis(true);
 
-                $nombres = $pedido["cliente"]["nombre"];
-                $identificacion = $pedido["cliente"]["identificacion"];
-            
+            $nombres = "";
+            $identificacion = "";
+            if (isset($req->nombres)) {
+                $nombres = $req->nombres;
+            }
+            if (isset($req->identificacion)) {
+                $identificacion = $req->identificacion;
+            }
 
             if ($nombres=="precio" && $identificacion=="precio") {
                 if($pedido->items){
 
                     foreach ($pedido->items as $val) {
 
-                        if (!$val->producto) {
-                            $items[] = [
-                                'descripcion' => $val->abono,
-                                'codigo_barras' => 0,
-                                'pu' => $val->monto,
-                                'cantidad' => $val->cantidad,
-                                'totalprecio' => $val->total,
-                               
-                            ];
-                        }else{
-
-                            $items[] = [
-                                'descripcion' => $val->producto->descripcion,
-                                'codigo_barras' => $val->producto->codigo_barras,
-                                'pu' => $val->producto->precio,
-                                'cantidad' => $val->cantidad,
-                                'totalprecio' => $val->total,
-                               
-                            ];
-                        }
+                        $items[] = [
+                            'descripcion' => $val->producto->descripcion,
+                            'codigo_barras' => $val->producto->codigo_barras,
+                            'pu' => $val->producto->precio,
+                            'cantidad' => $val->cantidad,
+                            'totalprecio' => $val->total,
+                           
+                        ];
                     }
                 }
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -102,9 +89,11 @@ class tickera extends Controller
                     //Current item ROW 1
 
                     $printer->setEmphasis(true);
+                    $printer->text($sucursal->nombre_registro);
+
+                    $printer->setEmphasis(false);
                     $printer->text("\n");
                     $printer->text($item['codigo_barras']);
-                    $printer->setEmphasis(false);
                    $printer->text("\n");
                    $printer->text($item['descripcion']);
                    $printer->text("\n");
@@ -120,33 +109,36 @@ class tickera extends Controller
                 }
             }else{
 
-                
-               $printer->setJustification(Printer::JUSTIFY_CENTER);
-
-                // $tux = EscposImage::load(resource_path() . "/images/logo-small.jpg", false);
-                // $printer -> bitImage($tux);
-                // $printer->setEmphasis(true);
-
-                // $printer->text("\n");
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
 
+                //$tux = EscposImage::load(resource_path() . "/images/small.jpg", false);
+                //$printer -> bitImage($tux);
+                $printer -> setTextSize(1,1);
+
                 $printer -> text("\n");
-                $printer -> text($sucursal->nombre_registro);
+                $printer -> text($sucursal->nombre_registro." ".$sucursal->rif);
                 $printer -> text("\n");
-                $printer -> text($sucursal->rif);
+                $printer -> text($sucursal->telefono1." | ".$sucursal->telefono2);
                 $printer -> text("\n");
-                $printer -> text($sucursal->telefono1." | ORDEN #".$pedido->id);
-                $printer -> text("\n");
+                $printer->setEmphasis(false);
+
+
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
 
                 $printer -> setTextSize(1,1);
 
+                
+                
 
-
+                $printer->text("NOTA DE ENTREGA #".$pedido->id);
                 $printer -> text("\n");
 
+                $printer->setEmphasis(false);
+
+                $printer -> text("\n");
                 if ($nombres!="") {
                     $printer->setJustification(Printer::JUSTIFY_LEFT);
-                    $printer -> text("Nombres: ".$nombres);
+                    $printer -> text("Nombre y Apellido: ".$nombres);
                     $printer -> text("\n");
                     $printer -> text("ID: ".$identificacion);
                     $printer -> text("\n");
@@ -169,7 +161,7 @@ class tickera extends Controller
                 $printer->feed();
                 $printer->setPrintLeftMargin(0);
                 $printer->setJustification(Printer::JUSTIFY_LEFT);
-                $printer->setEmphasis(true);
+                
                 $printer->setEmphasis(false);
                 $items = [];
                 $monto_total = 0;
@@ -178,79 +170,75 @@ class tickera extends Controller
 
                     foreach ($pedido->items as $val) {
 
-                        if (!$val->producto) {
-                            $items[] = [
-                                'descripcion' => $val->abono,
-                                'codigo_barras' => 0,
-                                'pu' => $val->monto,
-                                'cantidad' => $val->cantidad,
-                                'totalprecio' => $val->total,
-                               
-                            ];
-                        }else{
-
-                            $items[] = [
-                                'descripcion' => $val->producto->descripcion,
-                                'codigo_barras' => $val->producto->codigo_barras,
-                                'pu' => ($val->descuento<0)?number_format($val->producto->precio-$val->des_unitario,3):$val->producto->precio,
-                                'cantidad' => $val->cantidad,
-                                'totalprecio' => $val->total,
-                            ];
-                        }
+                        $items[] = [
+                            'descripcion' => $val->producto->descripcion,
+                            'pu' => $val->producto->precio,
+                            'cantidad' => $val->cantidad,
+                            'totalprecio' => $val->total,
+                           
+                        ];
                     }
                 }
                
                 foreach ($items as $item) {
 
                     //Current item ROW 1
+                    $printer->setEmphasis(true);
                    $printer->text($item['descripcion']);
+                $printer->setEmphasis(false);
                    $printer->text("\n");
-                   $printer->text($item['codigo_barras']);
-                   $printer->text("\n");
 
-                   $printer->setEmphasis(true);
-                   $printer->text(addSpaces("Ct ".$item['cantidad'],9));
-                   $printer->setEmphasis(false);
+                   $printer->text(addSpaces("Ct. ".$item['cantidad'],12)." | ");
+                   //$printer->text("\n");
+                   
+                   $printer->text(addSpaces("P/U. ".$item['pu'],13)." | ");
+                   //$printer->text("\n");
 
-                    if ($req->printprecio) {
-                       $printer->text(addSpaces("PU ".$item['pu'],11));
-                       $printer->text(addSpaces("To ".$item['totalprecio'],12));
-                    }else{
-
-                    }
-
+                   $printer->text(addSpaces("Tot. ".$item['totalprecio'],15));
                    $printer->text("\n");
 
 
-
-                    $printer->feed();
                 }
+                    $printer->feed();
                 $printer->setEmphasis(true);
 
 
-                if ($req->printprecio) {
-                    $printer->text("Desc: ".$pedido->total_des);
-                    $printer->text("\n");
-                    $printer->text("Sub-Total: ". number_format($pedido->clean_total/1.16,2) );
-                    $printer->text("\n");
-                    $printer->text("Monto IVA 16%: ".number_format($pedido->clean_total*.16,2));
-                    $printer->text("\n");
-                    $printer->text("Total: ".$pedido->total);
-                    $printer->text("\n");
-                    $printer->text("\n");
+
+                $printer->text("Desc: ".$pedido->total_des);
+                $printer->text("\n");
+                $printer->text("Sub-Total: ". $pedido->subtotal );
+                $printer->text("\n");
+                $printer->text("Monto IVA 16%: ".$pedido->iva);
+                $printer->text("\n");
+                $msj1 = "";
+                $msj2 = "";
+                if ($dolar==1) {
+                    $msj1 = "REF. ";
+                    $msj2 = "";
                 }else{
-                    
+                    $msj1 = "Bs. ";
+                    if ($pedido->total&&$dolar) {
+                        # code...
+                           // $msj2 = "   REF. ".number_format($pedido->total/$dolar);
+                    }
                 }
+                $printer->text("Total: ".$msj1.$pedido->total.$msj2);
+                $printer->text("\n");
+
+                $printer->setEmphasis(true);
+
+                $printer->text("\n");
                 $printer->setJustification(Printer::JUSTIFY_CENTER);
-
-                $printer->text("Creado: ".$pedido->created_at);
-                
-                $printer->text("\n");
+                $printer->text($pedido->created_at);
                 $printer->text("\n");
 
-               
+                $printer->text("¡Muchas gracias por su compra! :D");
+                $printer->text("\n");
 
+                $printer->text("\n");
+                $printer->text("\n");
                 
+              
 
 
             }

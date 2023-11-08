@@ -80,6 +80,16 @@
 		.d-flex div{
 			display: inline-block;
 		}
+		
+		.tr-striped:nth-child(odd) {
+            background-color: #8F9AA5;
+        }
+		.bg-danger-light{
+			background-color: #fec7d1 !important; 
+		}
+		.bg-success-light{
+			background-color: #c4f7c7 !important; 
+		}
 
 	</style>
 </head>
@@ -126,7 +136,7 @@
 					</td>
 					<td>
 						<h2>{{$cierre->fecha}}</h2>
-						<h4>CAJERO: {{$cierre->id_usuario}}</h4>
+						<h4>CAJERO: {{$cierre->usuario->usuario}}</h4>
 					</td>
 				</tr>
 				<tr class="">
@@ -137,9 +147,11 @@
 					<th class="right">
 						INVENTARIO
 					</th>
-					<td class="">{{$total_inventario_format}}</td>
+					<td class="">Venta: {{$total_inventario_format}}<br>Base: {{$total_inventario_base_format}}</td>
+
 					<td>
-						
+						<b>VUELTOS TOTALES</b> <hr>
+						{{($vueltos_totales)}}
 					</td>
 				</tr>
 				
@@ -147,7 +159,7 @@
 				<tr>
 					<th>DÉBITO</th>
 					<th>EFECTIVO</th>
-					<th>TRANSFERENCIA</th>
+					<th>TRANSFERENCIA / BIOPAGO</th>
 					<th>CRÉDITO</th>
 					<th>ENTREG / PEND</th>
 
@@ -155,7 +167,7 @@
 				<tr>
 					<td>{{($facturado[2])}}</td>
 					<td>{{($facturado[3])}}</td>
-					<td>{{($facturado[1])}}</td>
+					<td>{{($facturado[1])}} / {{($facturado[5])}}</td>
 					<td>{{($facturado[4])}}</td>
 					<td>{{($facturado["entregado"])}} - {{($facturado["pendiente"])}} = {{($facturado["entregadomenospend"])}}</td>
 				</tr>
@@ -163,16 +175,7 @@
 					<th colspan="5">REFERENCIAS DE PAGOS ELECTRÓNICOS</th>
 
 				</tr>
-				<tr>
-						<td>
-							BANCO
-						</td>
-						<th>REF</th>
-						<td>MONTO $</td>
-						<td>Pedido #</td>
-						<th>HORA</th>
-					</tr>
-				@foreach ($referencias as $i => $e)
+				@foreach ($referencias as $e)
 					<tr>
 						<td>
 							{{$e->banco}}
@@ -184,24 +187,11 @@
 							@endif
 						</td>
 						<th>{{$e->descripcion}}</th>
-						<td>$ {{$e->monto}} (BS {{$e->monto*$bs}})</td>
+						<td>{{$e->monto}}</td>
 						<td>Pedido #{{$e->id_pedido}}</td>
 						<th>{{$e->created_at}}</th>
 					</tr>
-					@if ((isset($referencias[$i+1])?$referencias[$i+1]->banco:"")!=$e->banco)
-						@foreach ($pagos_referencias_totales->where("banco",$e->banco) as $e)
-								<th colspan="5">
-									( {{$e->banco}} )
-									TOTAL. $ {{$e->total}} (BS {{$e->total*$bs}})
-									
-								</th>
-							
-						@endforeach
-					@endif
-					
 				@endforeach
-				<tr>
-				</tr>
 				<tr>
 					<th colspan="3">
 						<h3>TOTAL FACTURADO:</h3>
@@ -275,11 +265,66 @@
 
 				</tr>
 				<tr>
+					<th class="right sin-borde">BIOPAGO</th>
+					<td class="sin-borde">{{($cierre->caja_biopago)}}</td>
+					
+
+				</tr>
+				<tr>
 					<th class="right sin-borde">TOTAL REAL</th>
 					<td class="sin-borde text-success"><h1>{{($cierre_tot)}}</h1></td>
 					
 					
 				</tr>
+				<tr>
+					<td colspan="5"><b>CRÉDITO POR COBRAR TOTAL</b> <br> <span class="h2">{{number_format($cred_total,2)}}</span></td>
+				</tr>
+				<tr>
+					<td colspan="5"><b>ABONOS DEL DÍA</b> <br> <span class="h2">{{number_format($abonosdeldia,2)}}</span></td>
+				</tr>
+				
+				@foreach ($pedidos_abonos as $e)
+					<tr>
+						<td>
+							Abono. #{{$e->id}}
+						</td>
+						<td colspan="3">
+							Cliente: {{$e->cliente->nombre}}. {{$e->cliente->identificacion}}
+						</td>
+						<td>
+							@foreach ($e->pagos as $ee)
+								
+								<span> 
+									<b>
+										@switch($ee->tipo)
+											@case(1)
+											Transferencia
+											@break
+											@case(2)
+											Debito
+											@break
+											
+											@case(3)
+											Efectivo
+											@break
+											@case(4)
+											Credito
+											@break
+											@case(5)
+											Otros
+											@break
+											@case(6)
+											Vuelto
+											@break
+										@endswitch  
+									</b>
+									{{$ee->monto}}
+								</span>
+								<br>
+							@endforeach
+						</td>
+					</tr>
+				@endforeach
 				<tr>
 					<th colspan="5">MOVIMIENTOS DE CAJA</th>
 				
@@ -325,19 +370,87 @@
 			</tbody>
 		</table>
 		<hr/>
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th colspan="9">
+						MOVIMIENTOS DE INVENTARIO
+					</th>
+				</tr>
+			  <tr>
+				<th class="pointer">Usuario</th>
+				<th class="pointer">Origen</th>
+				<th class="pointer">Alterno</th>
+				<th class="pointer">Barras</th>
+				<th class="pointer">Descripción</th>
+				<th class="pointer">Cantidad</th>
+				<th class="pointer">Base</th>
+				<th class="pointer">Venta</th>
+				<th class="pointer">Hora</th>
+			  </tr>
+			</thead>
+				@foreach ($movimientosInventario as $e)
+					<tbody>
+						<tr>
+							<td rowSpan="2" class='align-middle'>{{$e->usuario?$e->usuario->usuario:""}}</td>
+							<td rowSpan="2" class='align-middle'>{{$e->origen?$e->origen:""}}</td>
+							@if ($e->antes)
+								<td class="bg-danger-light">{{$e->antes->codigo_proveedor?$e->antes->codigo_proveedor:""}}</td>
+								<td class="bg-danger-light">{{$e->antes->codigo_barras?$e->antes->codigo_barras:""}}</td>
+								<td class="bg-danger-light">{{$e->antes->descripcion?$e->antes->descripcion:""}}</td>
+								<td class="bg-danger-light">{{$e->antes->cantidad?$e->antes->cantidad:""}}</td>
+								<td class="bg-danger-light">{{$e->antes->precio_base?$e->antes->precio_base:""}}</td>
+								<td class="bg-danger-light">{{$e->antes->precio?$e->antes->precio:""}}</td>
+							@else
+								<td colSpan="6" class='text-center h4'>
+								Producto nuevo
+								</td>
+							@endif
+							
+							<td>{{$e->created_at?$e->created_at:""}}</td>
+						</tr>
+						<tr>
+							@if ($e->despues)
+								<td class="bg-success-light">{{$e->despues->codigo_proveedor?$e->despues->codigo_proveedor:""}}</td>
+								<td class="bg-success-light">{{$e->despues->codigo_barras?$e->despues->codigo_barras:""}}</td>
+								<td class="bg-success-light">{{$e->despues->descripcion?$e->despues->descripcion:""}}</td>
+								<td class="bg-success-light">{{$e->despues->cantidad?$e->despues->cantidad:""}}</td>
+								<td class="bg-success-light">{{$e->despues->precio_base?$e->despues->precio_base:""}}</td>
+								<td class="bg-success-light">{{$e->despues->precio?$e->despues->precio:""}}</td>
+							@else
+								<td colSpan="6" class='text-center h4'>
+								Producto Eliminado
+								</td>
+							@endif
+							<td>{{$e->created_at?$e->created_at:""}}</td>
+						</tr>
+					</tbody>
+				@endforeach
+		  </table>
 		<table class="table">
 			<tbody>
 				<tr>
-					<th colspan="6">MOVIMIENTOS</th>
+					<th colspan="7">MOVIMIENTOS DE PEDIDOS</th>
 				</tr>
 					@foreach($movimientos as $val)
 						@if ($val->motivo)
 							<tr>
+								<td>{{$val->usuario?$val->usuario->usuario:null}}</td>
 								<td>{{$val->tipo}}</td>
 								<td><b>Motivo</b><br/>{{$val->motivo}}</td>
-								<td><b>Pago</b><br/>{{$val->tipo_pago}}</td>
+								<td><b>{{$val->tipo_pago?"MétodoDePago":"Sin pago"}}</b><br/>{{$val->tipo_pago}}</td>
 								<td><b>Monto</b><br/>{{$val->monto}}</td>
-								<td><b>Items</b><br/>{{count($val->items)}}</td>
+								<td>
+									<b>Items {{count($val->items)}}</b>
+									
+									<br/>
+									@foreach ($val->items as $item)
+										@if ($item->producto)
+											{{$item->producto->codigo_barras}} <br>
+										@endif
+									@endforeach
+								</td>
 								<td>{{$val->created_at}}</td>
 							</tr>
 

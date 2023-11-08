@@ -33,10 +33,10 @@ function Credito({
   moneda,
 
 }) {
-  try{
-    let d = deudoresList.filter(e=>e.id==selectDeudor)[0]
+
   return (
     <div className="container"> 
+    
       <div className="row">
         <div className="col">
           <h3>Cuentas por cobrar</h3> 
@@ -72,7 +72,7 @@ function Credito({
                 e?
                 <tr key={e.id} className="text-center pointer" onClick={()=>{
                       setOnlyVueltos(0)
-                      setSelectDeudor(e.id)
+                      setSelectDeudor(i)
                       setsumPedidosArr([])
 
                     }}>
@@ -102,10 +102,10 @@ function Credito({
                     {detallesDeudor["pedido_total"]?
                     <>
                       <th className="" colSpan="2">
-                        {d?
+                        {deudoresList[selectDeudor]?
                         <div className="">
-                          <span className="">{d.identificacion}</span>
-                          <h1 className="">{d.nombre}</h1>
+                          <span className="">{deudoresList[selectDeudor].identificacion}</span>
+                          <h1 className="">{deudoresList[selectDeudor].nombre}</h1>
                         </div>:null}
                         {sumPedidosArr?
                           sumPedidosArr.map(e=><button key={e} className="btn btn-outline-success" data-id={e} data-tipo="del" onClick={sumPedidos}>{e}</button>)
@@ -148,6 +148,7 @@ function Credito({
                             <option value="3">Efectivo</option>            
                             <option value="1">Transferencia</option>            
                             <option value="2">Débito</option>            
+                            <option value="5">Biopago</option>            
                           </select>
                         </div>
                       </form>
@@ -188,6 +189,7 @@ function Credito({
                             {ee.tipo==1&&ee.monto!=0?<span className="w-50 btn-sm btn-info btn">Trans. {ee.monto}</span>:null}
                             {ee.tipo==2&&ee.monto!=0?<span className="w-50 btn-sm btn-secondary btn">Deb. {ee.monto}</span>:null}
                             {ee.tipo==3&&ee.monto!=0?<span className="w-50 btn-sm btn-success btn">Efec. {ee.monto}</span>:null}
+                            {ee.tipo==5&&ee.monto!=0?<span className="w-50 btn-sm btn-info btn">Biopago {ee.monto}</span>:null}
                             {ee.tipo==6&&ee.monto!=0?<span className="w-50 btn-sm btn-danger btn" data-id={e.id} onClick={onClickEditPedido}>Vuel. {ee.monto}</span>:null}
                             {ee.tipo==4&&ee.monto!=0?<span className="w-50 btn-sm btn-warning btn">Cred. {ee.monto}</span>:null}
                           </div>)}
@@ -218,9 +220,5 @@ function Credito({
       
     </div>
   )
-  }catch(err){
-    return <></>
-  }
-  
 }
 export default Credito

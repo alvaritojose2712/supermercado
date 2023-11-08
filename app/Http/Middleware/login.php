@@ -24,7 +24,7 @@ class login
         $se == 4) {
             return $next($request);
         }else{
-            return Response::json(["msj"=>"Error: Sin permisos","estado"=>false]);
+            return Response::json(["msj"=>"Error: Sin permisos. Debe volver a iniciar sesión","estado"=>false]);
 
         }
     }

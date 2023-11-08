@@ -23,6 +23,9 @@ class CreateGastosTable extends Migration
             $table->date("fecha");
             
             $table->integer("id_mov_caja")->nullable();
+            
+            $table->boolean("push")->default(0);
+
             $table->timestamps();
         });
     }

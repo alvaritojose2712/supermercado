@@ -20,7 +20,7 @@ class CreatePagosReferenciasTable extends Migration
             // 2 Debito 
             // 3 Efectivo 
             // 4 Credito  
-            // 5 Otros
+            // 5 BioPago
             // 6 vuelto
             $table->string('descripcion');
             $table->string('banco');

@@ -30,6 +30,9 @@ class CreateMovimientosCajasTable extends Migration
             $table->integer("id_pedido")->nullable();
 
             $table->decimal("monto",10,2);
+
+            $table->integer("id_vendedor")->unsigned();
+            $table->foreign('id_vendedor')->references('id')->on('usuarios');
             $table->timestamps();
 
 

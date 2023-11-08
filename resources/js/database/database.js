@@ -18,6 +18,10 @@ const db = {
   getPedidosList: data=>axios.post(host+"getPedidosList",data),
   verificarLogin: () => axios.post(host + "verificarLogin"),
   logout: ()=>axios.get(host+"logout"),
+  closeAllSession: ()=>axios.get(host+"closeAllSession"),
+  
+  
+  saveReplaceProducto: data=>axios.post(host+"saveReplaceProducto",data),
   
   guardarCierre: data=>axios.post(host+"guardarCierre",data),
 
@@ -38,6 +42,10 @@ const db = {
   setpersonacarrito: data=>axios.post(host+"setpersonacarrito",data),
 
   setPagoPedido: data=>axios.post(host+"setPagoPedido",data),
+  createDevolucion: data=>axios.post(host+"createDevolucion",data),
+  setDevolucion: data=>axios.post(host+"setDevolucion",data),
+  setpagoDevolucion: data=>axios.post(host+"setpagoDevolucion",data),
+  
   
   delpedido: data=>axios.post(host+"delpedido",data),
 
@@ -71,8 +79,13 @@ const db = {
   getMovimientos: data=>axios.post(host+"getMovimientos",data),
   
   getBuscarDevolucion: data=>axios.post(host+"getBuscarDevolucion",data),
+  getBuscarDevolucionhistorico: data=>axios.post(host+"getBuscarDevolucionhistorico",data),
 
-  setDevolucion: data=>axios.post(host+"setDevolucion",data),
+  getTareasCentral: data=>axios.get(host+"getTareasCentral",{params:data}),
+  
+  runTareaCentral: data=>axios.post(host+"runTareaCentral",data),
+  
+
   delMov: data=>axios.post(host+"delMov",data),
 
   
@@ -102,15 +115,27 @@ const db = {
   setFalla: data=>axios.post(host+"setFalla",data),
   delFalla: data=>axios.post(host+"delFalla",data),
   imprimirTicked: data=>axios.post(host+"imprimirTicked",data),
+  getTotalizarCierre: data=>axios.post(host+"getTotalizarCierre",data),
+  changepedidouser: data=>axios.post(host+"changepedidouser",data),
+  
+
+  getTareasLocal: data=>axios.get(host+"getTareasLocal",{params:data}),
+  resolverTareaLocal: data=>axios.get(host+"resolverTareaLocal",{params:data}),
+  
   sendCierre: data=>axios.get(host+"verCierre",{params:data}),
+  printTickedPrecio: ({ id }) => window.open(host + "/printTickedPrecio?id=" + id, "targed=blank"),
+
+  
 
   saveMontoFactura: data=>axios.post(host+"saveMontoFactura",data),
 
   reqpedidos: data => axios.post(host + "reqpedidos", data),
-  reqinventario: data => axios.post(host + "reqinventario", data),
+  changeIdVinculacionCentral: data => axios.post(host + "changeIdVinculacionCentral", data),
+  
   setexportpedido: data => axios.post(host + "setexportpedido", data),
   
   getmastermachine: data=>axios.post(host+"getmastermachine",data),
+  getStatusCierre: data=>axios.post(host+"getStatusCierre",data),
   
 
   getSucursal: data=>axios.get(host+"getSucursal",{params:data}),
@@ -119,24 +144,37 @@ const db = {
   delCategoria: data=>axios.post(host+"delCategoria",data),
   setCategorias: data=>axios.post(host+"setCategorias",data),
   
-
+  
 
 
   getProductosSerial: data=>axios.get(host+"getProductosSerial",{params:data}),
   checkPedidosCentral: data=>axios.post(host+"checkPedidosCentral",data),
-
+  
   setUsuario: data=>axios.post(host+"setUsuario",data),
   delUsuario: data => axios.post(host + "delUsuario", data),
   getUsuarios: data => axios.get(host + "getUsuarios", { params: data }),
   getCierres: data=>axios.get(host+"getCierres",{params:data}),
-  sendCuentasporCobrar: data=>axios.get(host+"sendCuentasporCobrar",{params:data}),
+  sendCuentasporCobrar: data => axios.get(host + "sendCuentasporCobrar", { params: data }),
   
   
   removeLote: data=>axios.post(host+"removeLote",data),
   getEstaInventario: data => axios.post(host + "getEstaInventario", data),
+  
+  getUniqueProductoById: data => axios.get(host + "getUniqueProductoById", { params: data }),
   setPagoProveedor: data => axios.post(host + "setPagoProveedor", data),
   getPagoProveedor: data => axios.post(host + "getPagoProveedor", data),
   delPagoProveedor: data => axios.post(host + "delPagoProveedor", data),
+  getPermisoCierre: data => axios.post(host + "getPermisoCierre", data),
+  
+  guardarDeSucursalEnCentral: data => axios.post(host + "guardarDeSucursalEnCentral", data),
+  
+
+  
+  getHistoricoInventario: data => axios.get(host + "getHistoricoInventario", { params: data }),
+  getmovientoinventariounitario: data => axios.get(host + "getmovientoinventariounitario", { params: data }),
+  getSyncProductosCentralSucursal: data => axios.post(host + "getSyncProductosCentralSucursal", data),
+  
+
   
   addRefPago: data => axios.post(host + "addRefPago", data),
   delRefPago: data=>axios.post(host+"delRefPago",data),
@@ -146,30 +184,48 @@ const db = {
   setGasto: data=>axios.post(host+"setGasto",data),
   
   setCtxBulto: data=>axios.post(host+"setCtxBulto",data),
+  setStockMin: data=>axios.post(host+"setStockMin",data),
+  
   setPrecioAlterno: data=>axios.post(host+"setPrecioAlterno",data),
   printPrecios: data=>axios.post(host+"printPrecios",data),
-
+  
   setconfigcredito: data=>axios.post(host+"setconfigcredito",data),
+  
+  setSocketUrlDB: data => axios.get(host + "setSocketUrlDB", { params: data }),
+  recibedSocketEvent: data => axios.get(host + "recibedSocketEvent", { params: data }),
+  
+  setNuevaTareaCentral: data =>axios.get(host+"setNuevaTareaCentral",{params:data}),
+  setInventarioFromSucursal: data => axios.post(host + "setInventarioFromSucursal", data),
+  getSucursales: data => axios.post(host + "getSucursales", data),
+  getInventarioSucursalFromCentral: data => axios.post(host + "getInventarioSucursalFromCentral", data),
+  setInventarioSucursalFromCentral: data => axios.post(host + "setInventarioSucursalFromCentral", data),
+  
+  setCambiosInventarioSucursal: data => axios.post(host + "setCambiosInventarioSucursal", data),
+  getInventarioFromSucursal: data => axios.post(host + "getInventarioFromSucursal", data),
+  saveChangeInvInSucurFromCentral: data => axios.post(host + "saveChangeInvInSucurFromCentral", data),
+  setnewtasainsucursal: data => axios.post(host + "setnewtasainsucursal", data),
+  updatetasasfromCentral: data => axios.post(host + "updatetasasfromCentral", data),
+  
   
   
   
   
   
   openPrintCreditos: (param) => window.open(host + "verCreditos?"+param,"targed=blank"),
-  openVerCierre: ({ type,fechaCierre }) => window.open(host + "verCierre?type=" + type + "&fecha=" + fechaCierre,"targed=blank"),
+  openVerCierre: ({ type,fechaCierre,totalizarcierre,usuario }) => window.open(host + "verCierre?type=" + type + "&fecha=" + fechaCierre+ "&totalizarcierre=" + totalizarcierre + "&usuario=" + usuario,"targed=blank"),
   openNotaentregapedido: ({ id }) => window.open(host + "/notaentregapedido?id=" + id, "targed=blank"),
   openVerFactura: ({ id }) => window.open(host + "verFactura?id=" + id, "targed=blank"),
   openReporteInventario: () => window.open(host + "reporteInventario", "targed=blank"),
   openReporteFalla: (id) => window.open(host + "reporteFalla?id=" + id, "targed=blank"),
   
   
-
-
+  
+  
 
   
   
   
-
+  
   // getProveedores: ()=>axios.post(host+"getProveedores.php"),
   // getusuarios: ()=>axios.post(host+"getusuarios.php"),
   // setPedidos: (data)=>{

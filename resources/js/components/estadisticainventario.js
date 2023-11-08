@@ -12,6 +12,10 @@ export default function EstadisticaInventario({
 	
 	dataEstaInven,
 	moneda,
+
+	categoriaEstaInve,
+	setcategoriaEstaInve,
+	categorias,
 }) {
 	let data = []
 
@@ -25,9 +29,19 @@ export default function EstadisticaInventario({
 	return (
 		<div className="container">
 			<div className="input-group">
+				<select
+					className={("form-control form-control-sm ")}
+					value={categoriaEstaInve}
+					onChange={e => setcategoriaEstaInve((e.target.value))}
+				>
+					<option value="">--Select--</option>
+					{categorias.map(e => <option value={e.id} key={e.id}>{e.descripcion}</option>)}
+					
+				</select>
 				<input type="text" className="form-control" placeholder="Buscar..." value={fechaQEstaInve} onChange={e=>setfechaQEstaInve(e.target.value)}/>
 				<input type="date" className="form-control" value={fechaFromEstaInve} onChange={e=>setfechaFromEstaInve(e.target.value)}/>
 				<input type="date" className="form-control" value={fechaToEstaInve} onChange={e=>setfechaToEstaInve(e.target.value)}/>
+				
 				<select className="form-control" value={orderByEstaInv} onChange={e=>setorderByEstaInv(e.target.value)}>
 					<option value="asc">ASC</option>
 					<option value="desc">DESC</option>
@@ -37,6 +51,7 @@ export default function EstadisticaInventario({
 				<thead>
 					<tr>
 						
+						<th className="pointer">Categoría</th>
 						<th>ID</th>
 						<th className="pointer" onClick={()=>setorderByColumEstaInv("codigo")}>Código</th>
 						<th className="pointer" onClick={()=>setorderByColumEstaInv("descripcion")}>Descripción</th>
@@ -49,6 +64,7 @@ export default function EstadisticaInventario({
 				<tbody>
 					{data?data.map(e=>
 						<tr key={e.id}>
+							<td>{e.categoria.descripcion}</td>
 							<td>{e.id}</td>
 							<td>{e.codigo_barras}</td>
 							<td>{e.descripcion}</td>

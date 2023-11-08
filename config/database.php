@@ -47,7 +47,22 @@ return [
                'dump_binary_path' => 'C:/xampp/mysql/bin/', // only the path, so without `mysqldump` or `pg_dump`
                'use_single_transaction'=>true,
                'timeout' => 60 * 5, // 5 minute timeout
-               'exclude_tables' => ['migrations', 'facturas'],
+               'exclude_tables' => [
+                    'migrations',
+                    'facturas',
+                    "items_facturas",
+                    'movimientos',
+                    'items_movimientos',
+                    "devoluciones",
+                    "items_devoluciones",
+                    'movimientos_inventariounitarios',
+                    'fallas',
+                    "movimientos_inventarios",
+                    "categorias",
+                    "tareaslocals",
+                    "gastos",
+                    "pagos_referencias",
+                ],
             ],
             'dump_command_path' => "",
             'driver' => 'mysql',

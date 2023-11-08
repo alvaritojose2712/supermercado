@@ -18,6 +18,9 @@ class items_pedidos extends Model
     public function producto() { 
         return $this->hasOne('App\Models\inventario',"id","id_producto"); 
     }
+    public function pedido() { 
+        return $this->hasOne('App\Models\pedidos',"id","id_pedido"); 
+    }
     public function lotedata() { 
         return $this->hasOne('App\Models\lotes',"id","lote"); 
     }

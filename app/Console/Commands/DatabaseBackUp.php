@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use env;
 
 class DatabaseBackUp extends Command
 {
@@ -11,15 +12,15 @@ class DatabaseBackUp extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
-
+    protected $signature = 'database:backup';
+  
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Command description';
-
+  
     /**
      * Create a new command instance.
      *
@@ -29,7 +30,7 @@ class DatabaseBackUp extends Command
     {
         parent::__construct();
     }
-
+  
     /**
      * Execute the console command.
      *
@@ -37,6 +38,14 @@ class DatabaseBackUp extends Command
      */
     public function handle()
     {
-        return 0;
+        
+        $filename = "backup-" . date('Y_m_d_h_i_s') . ".sql";
+  
+        $command = "c:\\xampp\mysql\bin\mysqldump -u " . env('DB_USERNAME') ." --password=" . env('DB_PASSWORD') . " -h " . env('DB_HOST') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/backup/" . $filename;
+  
+        $returnVar = NULL;
+        $output  = NULL;
+  
+        exec($command, $output, $returnVar);
     }
 }

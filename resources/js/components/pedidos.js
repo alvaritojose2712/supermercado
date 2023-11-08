@@ -3,6 +3,7 @@ import {useState} from 'react';
 import ModalShowPedidoFast from '../components/ModalShowPedidoFast';
 
 function Pedidos({
+auth,
 pedidoData,
 getPedidoFast,
 setexportpedido,
@@ -39,6 +40,16 @@ setTipoestadopedido,
 filterMetodoPago,
 filterMetodoPagoToggle,
 clickSetOrderColumnPedidos,
+toggleImprimirTicket,
+
+setmodalchangepedido,
+setseletIdChangePedidoUserHandle,
+modalchangepedido,
+modalchangepedidoy,
+modalchangepedidox,
+usuarioChangeUserPedido,
+setusuarioChangeUserPedidoHandle,
+usuariosData,
 }) {
 	try{
 		return (
@@ -96,7 +107,9 @@ clickSetOrderColumnPedidos,
 					<div className="input-group cell3">
 	      		<div className="btn-group">
 	      			<button onClick={()=>setshowMisPedido(true)} className={("btn btn-sm btn-outline-")+(!showMisPedido?null:"success")}>Mis pedidos</button>
-	      			<button onClick={()=>setshowMisPedido(false)} className={("btn btn-sm btn-outline-")+(showMisPedido?null:"success")}>Todos los pedidos</button>
+					{auth(1)?
+	      				<button onClick={()=>setshowMisPedido(false)} className={("btn btn-sm btn-outline-")+(showMisPedido?null:"success")}>Todos los pedidos</button>
+					:null}
 	      		</div>
 	      	</div>
 					<div className="cell4">
@@ -105,6 +118,7 @@ clickSetOrderColumnPedidos,
 						<span className={(filterMetodoPagoToggle==2?"btn-secondary":"")+(" btn")} data-type="2" onClick={filterMetodoPago}>Deb.</span>
 						<span className={(filterMetodoPagoToggle==3?"btn-success":"")+(" btn")} data-type="3" onClick={filterMetodoPago}>Efec.</span>
 						<span className={(filterMetodoPagoToggle==4?"btn-warning":"")+(" btn")} data-type="4" onClick={filterMetodoPago}>Cred.</span>
+						<span className={(filterMetodoPagoToggle==5?"btn-info":"")+(" btn")} data-type="5" onClick={filterMetodoPago}>Biopago.</span>
 						<span className={(filterMetodoPagoToggle==6?"btn-danger":"")+(" btn")} data-type="6" onClick={filterMetodoPago}>Vuel.</span>															
 					</div>
 				</div>
@@ -169,16 +183,33 @@ clickSetOrderColumnPedidos,
 								e?
 									<div className={("card-pedidos ")+(e.estado?"":"bg-sinapsis-light")} key={e.id}>
 											
-										<div className="cell1 pointer" data-id={e.id} onClick={onClickEditPedido}>
+										<div className="cell1 pointer"/*  data-id={e.id} onClick={onClickEditPedido} */>
 											
-								    	<h3>
-									    	<span className="btn btn-sm btn-secondary">
-									    		{e.id}
-									    	</span>
-								    	</h3>
+											<h3>
+												<span className="btn btn-sm btn-secondary">
+													{e.id}
+												</span>
+											</h3>
 											<span className="text-muted text-left">
-									    		{e.vendedor?e.vendedor.nombre:null} 
-									    </span>
+									    		{e.vendedor?e.vendedor.nombre:null} <i className="fa fa-undo pointer text-success" onClick={(event)=>{setseletIdChangePedidoUserHandle(event,e.id)}}></i>
+									    	</span>
+											{modalchangepedido?
+												<div className="modalchangepedido" style={{top:modalchangepedidoy+20,left:modalchangepedidox}}>
+													<div className="w-100 btn mb-1 btn-sm">
+														<i className="fa fa-times text-danger" onClick={()=>setmodalchangepedido(false)}></i>
+													</div>
+													<h5>Transferir a...</h5>
+													<select
+														className={("form-control form-control-sm ")}
+														value={usuarioChangeUserPedido}
+														onChange={e => setusuarioChangeUserPedidoHandle((e.target.value))}
+													>
+														<option value="">--Seleccione Usuario--</option>
+														{usuariosData.length?usuariosData.map(e => <option value={e.id} key={e.id}>{e.id} - {e.usuario}</option>):null}
+														
+													</select>
+												</div>
+											:null}
 									    <br/>
 									    <small className="text-muted font-size-12">{e.created_at}</small>
 										</div>
@@ -203,7 +234,7 @@ clickSetOrderColumnPedidos,
 						    						:null}
 
 						    						{ee.monto!=0&&ee.tipo==5?
-						    							<span className="btn btn-primary btn-sm">Otr. {ee.monto}</span>
+						    							<span className="btn btn-primary btn-sm">Biopago {ee.monto}</span>
 						    						:null}
 
 						    						{ee.monto!=0&&ee.tipo==6?
@@ -229,8 +260,9 @@ clickSetOrderColumnPedidos,
 											    	</td>
 											    	<td className="cell3">
 															<div className="btn-options btn-group">
-																<button className="btn btn-outline-success" data-id={e.id} onClick={getPedidoFast}><i className="fa fa-eye"></i></button>
-																<button className="btn btn-outline-danger" data-id={e.id} data-type="getPedidos" onClick={onCLickDelPedido}><i className="fa fa-times"></i></button>
+																<button className="btn btn-outline-success btn-sm" data-id={e.id} onClick={getPedidoFast}><i className="fa fa-eye"></i></button>
+																<button className="btn btn-outline-sinapsis btn-sm" onClick={() => toggleImprimirTicket(e.id)}><i className="fa fa-print"></i></button>
+																<button className="btn btn-outline-danger btn-sm" data-id={e.id} data-type="getPedidos" onClick={onCLickDelPedido}><i className="fa fa-times"></i></button>
 															</div>
 											    	</td>
 								    				

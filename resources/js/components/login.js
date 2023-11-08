@@ -84,7 +84,7 @@ class Login extends Component{
 					</form>
 				</div>
 				<span className="text-muted mt-4 text-center">
-					Ospino Systems<br/>
+					Ospino Systems C.A.<br/>
 					<img src={logo} alt="logo ao" height="150px"/>
 				</span>
 			</div>

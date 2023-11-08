@@ -7,16 +7,22 @@ import Fallas from '../components/fallas';
 import InventarioForzado from '../components/inventarioForzado';
 import EstadisticaInventario from '../components/estadisticainventario';
 import Gastos from '../components/gastos';
+import React, { useEffect } from 'react';
 
 
 
 
 
 function Inventario({
+  children,
+
+  user,
+  printTickedPrecio,
   setdropprintprice,
-dropprintprice,
+  dropprintprice,
   printPrecios,
   setCtxBulto,
+  setStockMin,
   setPrecioAlterno,
 
   openReporteFalla,
@@ -225,7 +231,49 @@ dropprintprice,
 
   sameCatValue,
   sameProValue,
+  categoriaEstaInve,
+  setcategoriaEstaInve,
+
+  qhistoinven,
+  setqhistoinven,
+  fecha1histoinven,
+  setfecha1histoinven,
+  fecha2histoinven,
+  setfecha2histoinven,
+  orderByHistoInven,
+  setorderByHistoInven,
+  historicoInventario,
+  usuarioHistoInven,
+  setusuarioHistoInven,
+  usuariosData,
+  getUsuarios,
+  getHistoricoInventario,
+
+  openmodalhistoricoproducto,
+  showmodalhistoricoproducto,
+  setshowmodalhistoricoproducto,
+  fecha1modalhistoricoproducto,
+  setfecha1modalhistoricoproducto,
+  fecha2modalhistoricoproducto,
+  setfecha2modalhistoricoproducto,
+  usuariomodalhistoricoproducto,
+  setusuariomodalhistoricoproducto,
+
+  datamodalhistoricoproducto,
+  setdatamodalhistoricoproducto,
+  getmovientoinventariounitario,
+
+  selectRepleceProducto,
+  replaceProducto,
+  setreplaceProducto,
+  saveReplaceProducto,
+  
+
+  
 }) {
+  useEffect(()=>{
+    getUsuarios()
+  }, [])
 
   const type = type => {
     return !type || type === "delete" ? true : false
@@ -235,17 +283,22 @@ dropprintprice,
     <>
       <div className="container">
         <div className="row">
-        <div className="col mb-2 d-flex justify-content-between auto-colum">
-          <div className="btn-group auto-colum">              
+        <div className="col mb-2 d-flex justify-content-between">
+          <div className="btn-group">              
               <button className={("btn ")+(subViewInventario=="inventario"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("inventario")}>Inventario</button>
               
-              <button className={("btn ")+(subViewInventario=="proveedores"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("proveedores")}>Proveedores</button>
+              {user.iscentral?
+                <button className={("btn ")+(subViewInventario=="precarga"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("precarga")}>PreCarga</button>
+              :null}
+              {user.iscentral?
+                <button className={("btn ")+(subViewInventario=="proveedores"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("proveedores")}>Proveedores</button>
+              :null}
               <>
                 <button className={("btn ") + (subViewInventario=="facturas"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("facturas")}>Facturas</button>
               </>
               <button className={("btn ") + (subViewInventario=="fallas"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("fallas")}>Fallas</button>
           </div>
-          <div className="btn-group auto-colum">
+          <div className="btn-group">
               <button className={("btn ") + (subViewInventario == "gastos" ? "btn-success" : "btn-outline-success")} onClick={() => setsubViewInventario("gastos")}>Gastos</button>
               <button className={("btn ") + (subViewInventario=="estadisticas"?"btn-success":"btn-outline-success")} onClick={()=>setsubViewInventario("estadisticas")}>Estadísticas</button> 
           </div>
@@ -255,6 +308,7 @@ dropprintprice,
         </div>
       </div>
       <hr/>
+      {children}
       {
         subViewInventario=="facturas"?
           <Facturas
@@ -318,44 +372,22 @@ dropprintprice,
       {
         subViewInventario=="inventario"?
           <>
-            <div className="container">
+            <div className="container-fluid">
               <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex justify-content-start">
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col d-flex justify-content-center">
+                      <button className="btn btn-sinapsis ms-2" onClick={()=>setmodViewInventario("list")}>Gestión <i className="fa fa-paper-plane"></i></button>
+                      <button className="btn btn-sinapsis ms-2" onClick={()=>setmodViewInventario("historico")}>Histórico <i className="fa fa-refresh"></i></button>
 
-                  {subViewInventario == "inventario" && modViewInventario != "unique" ?
-                    <button className="btn btn-success text-light" onClick={() => changeInventario(null, null, null, "add")}>Nuevo (f2) <i className="fa fa-plus"></i></button>
-                    :
-                    <button className="btn btn-sinapsis mr-1" onClick={setNewProducto}>Nuevo <i className="fa fa-plus"></i></button>
-                  }
-
-                 
-                  <button className={(modViewInventario == "list" ? "btn-success text-light" : "") + (" ms-2 btn")} onClick={() => setmodViewInventario("list")}><i className="fa fa-list"></i></button>
-                  <button className={(modViewInventario == "unique" ? "btn-sinapsis" : "") + (" btn")} onClick={() => setmodViewInventario("unique")}><i className="fa fa-columns"></i></button>
-                  <button className="btn btn-warning ms-2" onClick={reporteInventario}><i className="fa fa-print"></i></button>
-                  
-                  <div className="dropdown ms-1">
-                    <button onClick={()=>setdropprintprice(!dropprintprice)} className="btn btn-warning dropdown-toggle" type="button" id="preciosbtn" data-bs-toggle="dropdown" aria-expanded="false">
-                      Precio
-                    </button>
-                    <ul className={("dropdown-menu ")+(dropprintprice?"show":"")} aria-labelledby="preciosbtn">
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(3)}>$</a></li>
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(7)}>Mayor en $</a></li>
-
-                      {/*<li><a className="dropdown-item" href="#" onClick={()=>printPrecios(1)}>$ con Bs</a></li>
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(2)}>Bs con $</a></li>
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(4)}>Bs</a></li>
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(5)}>Mayor en $ con Bs</a></li>
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(6)}>Mayor en Bs con $</a></li>
-
-                      <li><a className="dropdown-item" href="#" onClick={()=>printPrecios(8)}>Mayor en Bs</a></li>
-                    */}
-                    </ul>
+                    </div>
+                    
                   </div>
+
                   
-                
                 </div>
 
-                {/* {factSelectIndex == null ? null
+                {factSelectIndex == null ? null
                   :
                   <div className="input-group w-25">
                     <span className="input-group-text" >{facturas[factSelectIndex] ? facturas[factSelectIndex].proveedor.descripcion : null}</span>
@@ -366,12 +398,100 @@ dropprintprice,
                       <i className="fa fa-times"></i>
                     </button>
                   </div>
-                } */}
+                }
               </div>
               <hr/>
             </div>
-            {modViewInventario=="unique"?
-            <CargarProducto
+            
+            {modViewInventario=="historico"?
+            <>
+              <div className="container">
+                <div className="input-group">
+                  <select
+                    className={("form-control form-control-sm ")}
+                    value={usuarioHistoInven}
+                    onChange={e => setusuarioHistoInven((e.target.value))}
+                  >
+                    <option value="">--Seleccione Usuario--</option>
+                    {usuariosData.map(e => <option value={e.id} key={e.id}>{e.usuario}</option>)}
+                    
+                  </select>
+                  <input type="text" className="form-control" placeholder="Buscar..." value={qhistoinven} onChange={e=>setqhistoinven(e.target.value)}/>
+                  <input type="date" className="form-control" value={fecha1histoinven} onChange={e=>setfecha1histoinven(e.target.value)}/>
+                  <input type="date" className="form-control" value={fecha2histoinven} onChange={e=>setfecha2histoinven(e.target.value)}/>
+                  
+                  <select className="form-control" value={orderByHistoInven} onChange={e=>setorderByHistoInven(e.target.value)}>
+                    <option value="asc">ASC</option>
+                    <option value="desc">DESC</option>
+                  </select>
+
+                  <button className="btn btn-success" onClick={getHistoricoInventario}><i className="fa fa-search"></i></button>
+                  
+
+                </div>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th className="pointer">Usuario</th>
+                      <th className="pointer">Origen</th>
+                      <th className="pointer">Alterno</th>
+                      <th className="pointer">Barras</th>
+                      <th className="pointer">Descripción</th>
+                      <th className="pointer">Cantidad</th>
+                      <th className="pointer">Base</th>
+                      <th className="pointer">Venta</th>
+                      <th className="pointer">Hora</th>
+                    </tr>
+                  </thead>
+                    {historicoInventario.length?historicoInventario.map(e=>
+                        <tbody key={e.id}>
+                              <tr className='bg-danger-light'>
+                                <td rowSpan={2} className='align-middle'>{e.usuario?e.usuario.usuario:""}</td>
+                                <td rowSpan={2} className='align-middle'>{e.origen?e.origen:""}</td>
+                                {e.antes?
+                                  <>
+                                    <td>{e.antes.codigo_proveedor?e.antes.codigo_proveedor:""}</td>
+                                    <td>{e.antes.codigo_barras?e.antes.codigo_barras:""}</td>
+                                    <td>{e.antes.descripcion?e.antes.descripcion:""}</td>
+                                    <td>{e.antes.cantidad?e.antes.cantidad:""}</td>
+                                    <td>{moneda(e.antes.precio_base?e.antes.precio_base:"")}</td>
+                                    <td>{moneda(e.antes.precio?e.antes.precio:"")}</td>
+                                  </>
+                                :
+                                <>
+                                    <td colSpan={6} className='text-center h4'>
+                                      Producto nuevo
+                                    </td>
+                                  </>
+                                }
+                                <td>{e.created_at?e.created_at:""}</td>
+                              </tr>
+                              <tr className='bg-success-light pb-table2'>
+                                {e.despues?
+                                  <>
+                                    <td>{e.despues.codigo_proveedor?e.despues.codigo_proveedor:""}</td>
+                                    <td>{e.despues.codigo_barras?e.despues.codigo_barras:""}</td>
+                                    <td>{e.despues.descripcion?e.despues.descripcion:""}</td>
+                                    <td>{e.despues.cantidad?e.despues.cantidad:""}</td>
+                                    <td>{moneda(e.despues.precio_base?e.despues.precio_base:"")}</td>
+                                    <td>{moneda(e.despues.precio?e.despues.precio:"")}</td>
+                                  </>
+                                :
+                                <>
+                                    <td colSpan={6} className='text-center h4'>
+                                      Producto Eliminado
+                                    </td>
+                                  </>
+                                }
+                                <td>{e.created_at?e.created_at:""}</td>
+                              </tr>
+                        </tbody>
+                      
+                      ):null}
+                </table>
+              </div>
+            </>
+           /*  <CargarProducto
               categorias={categorias}
               setporcenganancia={setporcenganancia}
               type={type}
@@ -447,8 +567,33 @@ dropprintprice,
               addNewLote={addNewLote}
               changeModLote={changeModLote}
               
-            />
-            : <InventarioForzado
+            /> */
+            :null} 
+
+            {modViewInventario=="list"?
+              <InventarioForzado
+                selectRepleceProducto={selectRepleceProducto}
+                replaceProducto={replaceProducto}
+                setreplaceProducto={setreplaceProducto}
+                saveReplaceProducto={saveReplaceProducto}
+                user={user}
+                setStockMin={setStockMin}
+                getmovientoinventariounitario={getmovientoinventariounitario}
+                datamodalhistoricoproducto={datamodalhistoricoproducto}
+                setdatamodalhistoricoproducto={setdatamodalhistoricoproducto}
+                usuariosData={usuariosData}
+                openmodalhistoricoproducto={openmodalhistoricoproducto}
+                showmodalhistoricoproducto={showmodalhistoricoproducto}
+                setshowmodalhistoricoproducto={setshowmodalhistoricoproducto}
+                fecha1modalhistoricoproducto={fecha1modalhistoricoproducto}
+                setfecha1modalhistoricoproducto={setfecha1modalhistoricoproducto}
+                fecha2modalhistoricoproducto={fecha2modalhistoricoproducto}
+                setfecha2modalhistoricoproducto={setfecha2modalhistoricoproducto}
+                usuariomodalhistoricoproducto={usuariomodalhistoricoproducto}
+                setusuariomodalhistoricoproducto={setusuariomodalhistoricoproducto}
+
+                reporteInventario={reporteInventario}
+                printTickedPrecio={printTickedPrecio}
                 sameCatValue={sameCatValue}
                 sameProValue={sameProValue}
                 setCtxBulto={setCtxBulto}
@@ -484,9 +629,12 @@ dropprintprice,
                 setInvorderColumn={setInvorderColumn}
                 InvorderBy={InvorderBy}
                 setInvorderBy={setInvorderBy}
-              />}
+              />
+            :null
+            }
           </>
         :null
+          
       }
       {subViewInventario=="proveedores"?<Proveedores 
 
@@ -532,6 +680,9 @@ dropprintprice,
       />:null}
       {subViewInventario=="estadisticas"?
         <EstadisticaInventario
+          categoriaEstaInve={categoriaEstaInve}
+          setcategoriaEstaInve={setcategoriaEstaInve}
+          categorias={categorias}
           fechaQEstaInve={fechaQEstaInve}
           setfechaQEstaInve={setfechaQEstaInve}
           fechaFromEstaInve={fechaFromEstaInve}

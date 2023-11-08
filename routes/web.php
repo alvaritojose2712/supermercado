@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TareaslocalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventarioController;
@@ -27,28 +28,45 @@ use App\Http\Controllers\LotesController;
 use App\Http\Controllers\PagoFacturasController;
 use App\Http\Controllers\PagosReferenciasController;
 use App\Http\Controllers\GastosController;
-
+use App\Http\Controllers\tickeprecioController;
+use App\Http\Controllers\CierresController;
+use App\Http\Controllers\DevolucionesController;
+use App\Http\Controllers\MovimientosInventarioController;
+use App\Http\Controllers\MovimientosInventariounitarioController;
 
 Route::get('getip', [sendCentral::class,"getip"]);
+Route::get('/update', function () {
+    return '
+		c:\\xampp\mysql\bin\mysql -u root -p sinapsis --binary-mode o < sinapsisData.sql <br/>
+		git stash <br/>
+		c:\\xampp\mysql\bin\mysqldump -u root -p --no-create-db --no-create-info --complete-insert --extended-insert sinapsis > sinapsisData.sql <br/>
+		git stash <br/>
+		git pull https://github.com/alvaritojose2712/ventas.git <br/>
+		php artisan optimize <br/>
+		php artisan optimize:clear <br/>
+	';
+});
 Route::get('/backup', function () {
+    \Illuminate\Support\Facades\Artisan::call('database:backup');
+    return 'Respaldo Exitoso!';
+});
+
+Route::get('/backup-run', function () {
 
     \Illuminate\Support\Facades\Artisan::call('backup:run');
 
     return 'Copia de seguridad completada!';
 
 });
-
-Route::get('', [HomeController::class,"index"]);
-Route::get('setCarrito', [InventarioController::class,"setCarrito"]);
-
-Route::post('getinventario', [InventarioController::class,"index"]);
-Route::post('printPrecios', [tickera::class,"precio"]);
-
-
 Route::get('error', function (){
 	return view("layouts.error");
 })->name("error");
 
+
+
+Route::get('', [HomeController::class,"index"]);
+
+Route::get('closeAllSession', [HomeController::class,"closeAllSession"]);
 Route::post('login', [HomeController::class,"login"]);
 Route::get('logout', [HomeController::class,"logout"]);
 Route::post('verificarLogin', [HomeController::class,"verificarLogin"]);
@@ -56,12 +74,33 @@ Route::post('verificarLogin', [HomeController::class,"verificarLogin"]);
 Route::get('sucursal', [SucursalController::class,"index"]);
 Route::get('setSucursal', [SucursalController::class,"setSucursal"])->name("setSucursal");
 Route::get('getSucursal', [SucursalController::class,"getSucursal"]);
+Route::post('getMoneda', [MonedaController::class,"getMoneda"]);
+Route::post('today', [PedidosController::class,"today"]);
+Route::get('today', [PedidosController::class,"today"]);
+
+//Fuera de los middlewares debido a que es la ruta mas solicitadad de la app. Mejora el rendimiento al hacer menos calculos
+Route::post('getinventario', [InventarioController::class,"index"]);
+
 
 Route::group(['middleware' => ['login']], function () {
 	
-
-
 	Route::group(['middleware' => ['caja']], function () {
+		Route::get('setCarrito', [InventarioController::class,"setCarrito"]);
+
+		Route::post('getPedidosList', [PedidosController::class,"getPedidosUser"]);
+		
+		Route::post('getVentas', [PedidosController::class,"getVentas"]);
+		Route::post('getPedido', [PedidosController::class,"getPedido"]);
+		Route::post('getPedidosFast', [PedidosController::class,"getPedidosFast"]);
+		Route::post('delItemPedido', [ItemsPedidosController::class,"delItemPedido"]);
+		Route::post('changeEntregado', [ItemsPedidosController::class,"changeEntregado"]);
+		
+		Route::post('setCantidad', [ItemsPedidosController::class,"setCantidad"]);
+		Route::post('setpersonacarrito', [PedidosController::class,"setpersonacarrito"]);
+		
+		Route::post('setPrecioAlternoCarrito', [ItemsPedidosController::class,"setPrecioAlternoCarrito"]);
+		Route::post('setCtxBultoCarrito', [ItemsPedidosController::class,"setCtxBultoCarrito"]);
+		
 		Route::post('getPedidos', [PedidosController::class,"getPedidos"]);
 		
 		Route::get('notaentregapedido', [PedidosController::class,"notaentregapedido"]);
@@ -94,7 +133,7 @@ Route::group(['middleware' => ['login']], function () {
 		
 		Route::post('getMovimientos', [MovimientosController::class,"getMovimientos"]);
 		Route::post('getBuscarDevolucion', [InventarioController::class,"index"]);
-		Route::post('setDevolucion', [MovimientosController::class,"setDevolucion"]);
+		Route::post('getBuscarDevolucionhistorico', [DevolucionesController::class,"getBuscarDevolucionhistorico"]);
 		
 		Route::post('setClienteCrud', [ClientesController::class,"setClienteCrud"]);
 		Route::post('getClienteCrud', [ClientesController::class,"getpersona"]);
@@ -107,9 +146,19 @@ Route::group(['middleware' => ['login']], function () {
 		Route::post('guardarCierre', [PedidosController::class,"guardarCierre"]);
 		Route::get('verCierre', [PedidosController::class,"verCierre"]);
 		Route::post('cerrar', [PedidosController::class,"cerrar"]);
-		Route::get('getCierres', [PedidosController::class,"getCierres"]);
+		Route::post('getPermisoCierre', [TareaslocalController::class,"getPermisoCierre"]);
 		Route::get('sendCuentasporCobrar', [PedidosController::class,"sendCuentasporCobrar"]);
 
+		Route::post('createDevolucion', [DevolucionesController::class,"createDevolucion"]);
+		Route::post('setDevolucion', [DevolucionesController::class,"setDevolucion"]);
+		Route::post('setpagoDevolucion', [DevolucionesController::class,"setpagoDevolucion"]);
+		Route::post('changepedidouser', [PedidosController::class,"changepedidouser"]);
+		Route::get('getUsuarios', [UsuariosController::class,"getUsuarios"]);
+		
+		Route::post('delpedido', [PedidosController::class,"delpedido"]);
+
+		Route::get('getCierres', [PedidosController::class,"getCierres"]);
+		
 		
 	});
 	Route::group(['middleware' => ['vendedor']], function () {
@@ -118,6 +167,20 @@ Route::group(['middleware' => ['login']], function () {
 	});
 	
 	Route::group(['middleware' => ['admin']], function () {
+		Route::get('delpedidoforce', [PedidosController::class,"delpedidoForce"]);
+		
+		
+		Route::get('getTareasLocal', [TareaslocalController::class,"getTareasLocal"]);
+		Route::get('resolverTareaLocal', [TareaslocalController::class,"resolverTareaLocal"]);
+		
+		Route::get('getHistoricoInventario', [MovimientosInventarioController::class,"getHistoricoInventario"]);
+		Route::get('getmovientoinventariounitario', [MovimientosInventariounitarioController::class,"getmovientoinventariounitario"]);
+		Route::post('getSyncProductosCentralSucursal', [InventarioController::class,"getSyncProductosCentralSucursal"]);
+		
+		Route::post('saveReplaceProducto', [InventarioController::class,"saveReplaceProducto"]);
+		Route::post('guardarDeSucursalEnCentral', [InventarioController::class,"guardarDeSucursalEnCentral"]);
+		
+		
 		
 		
 		/* GastosController */
@@ -127,6 +190,8 @@ Route::group(['middleware' => ['login']], function () {
 		Route::post('guardarNuevoProductoLote', [InventarioController::class,"guardarNuevoProductoLote"]);
 
 		Route::post('setCtxBulto', [InventarioController::class,"setCtxBulto"]);
+		Route::post('setStockMin', [InventarioController::class,"setStockMin"]);
+		
 		Route::post('setPrecioAlterno', [InventarioController::class,"setPrecioAlterno"]);
 		
 		Route::post('getProveedores', [ProveedoresController::class,"getProveedores"]);
@@ -163,10 +228,11 @@ Route::group(['middleware' => ['login']], function () {
 		Route::get('verFactura', [FacturaController::class,"verFactura"]);
 		Route::post('setUsuario', [UsuariosController::class,"setUsuario"]);
 		Route::post('delUsuario', [UsuariosController::class,"delUsuario"]);
-		Route::get('getUsuarios', [UsuariosController::class,"getUsuarios"]);
 		Route::get('verCreditos', [PagoPedidosController::class,"verCreditos"]);
 		Route::get('reporteInventario', [InventarioController::class,"reporteInventario"]);
 		Route::post('getEstaInventario', [InventarioController::class,"getEstaInventario"]);
+
+		Route::post('changeIdVinculacionCentral', [InventarioController::class,"changeIdVinculacionCentral"]);
 
 		Route::post('saveMontoFactura', [FacturaController::class,"saveMontoFactura"]);
 		Route::post('setPagoProveedor', [PagoFacturasController::class,"setPagoProveedor"]);
@@ -174,44 +240,22 @@ Route::group(['middleware' => ['login']], function () {
 		Route::post('delPagoProveedor', [PagoFacturasController::class,"delPagoProveedor"]);
 		
 		Route::post('delMovCaja', [MovimientosCajaController::class,"delMovCaja"]);
+		
+		Route::get('printTickedPrecio', [tickeprecioController::class,"tickedPrecio"]);
+		Route::post('getStatusCierre', [CierresController::class,"getStatusCierre"]);
+		Route::post('getTotalizarCierre', [CierresController::class,"getTotalizarCierre"]);
 
-
-	});
+		Route::post('printPrecios', [tickera::class,"precio"]);
+		
+		
 		Route::post('delMov', [MovimientosController::class,"delMov"]);
-	Route::post('getPedidosList', [PedidosController::class,"getPedidosUser"]);
-
-	Route::post('getVentas', [PedidosController::class,"getVentas"]);
-
-	Route::post('getMoneda', [MonedaController::class,"getMoneda"]);
-	Route::post('today', [PedidosController::class,"today"]);
-	
-	Route::post('getPedido', [PedidosController::class,"getPedido"]);
-	Route::post('getPedidosFast', [PedidosController::class,"getPedidosFast"]);
-	Route::post('delItemPedido', [ItemsPedidosController::class,"delItemPedido"]);
-	Route::post('changeEntregado', [ItemsPedidosController::class,"changeEntregado"]);
-	
-	Route::post('delpedido', [PedidosController::class,"delpedido"]);
-	Route::post('setCantidad', [ItemsPedidosController::class,"setCantidad"]);
-	Route::post('setpersonacarrito', [PedidosController::class,"setpersonacarrito"]);
-
-	Route::post('setPrecioAlternoCarrito', [ItemsPedidosController::class,"setPrecioAlternoCarrito"]);
-	Route::post('setCtxBultoCarrito', [ItemsPedidosController::class,"setCtxBultoCarrito"]);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//Update App
-	Route::get('update', [sendCentral::class,"updateApp"]);
-	
-	
+		
 	//Central
 		Route::post('checkPedidosCentral', [InventarioController::class,"checkPedidosCentral"]);
+		Route::post('saveChangeInvInSucurFromCentral', [InventarioController::class,"saveChangeInvInSucurFromCentral"]);
+		Route::get('getUniqueProductoById', [InventarioController::class,"getUniqueProductoById"]);
+
+		
 		
 		Route::get('setVentas', [sendCentral::class,"setVentas"]);
 		Route::get('setGastos', [sendCentral::class,"setGastos"]);
@@ -222,26 +266,62 @@ Route::group(['middleware' => ['login']], function () {
 		Route::get('setFacturasCentral', [sendCentral::class,"setFacturasCentral"]);
 		
 		Route::post('getmastermachine', [sendCentral::class,"getmastermachine"]);
-
+		Route::post('setnewtasainsucursal', [sendCentral::class,"setnewtasainsucursal"]);
+		Route::post('updatetasasfromCentral', [sendCentral::class,"updatetasasfromCentral"]);
+		
+		//req
+		Route::get('setNuevaTareaCentral', [sendCentral::class,"setNuevaTareaCentral"]);
+	
+		Route::get('setSocketUrlDB', [sendCentral::class,"setSocketUrlDB"]);
+		
+		Route::post('reqpedidos', [sendCentral::class,"reqpedidos"]);
+		Route::post('setInventarioFromSucursal', [sendCentral::class,"setInventarioFromSucursal"]);
+		Route::post('getSucursales', [sendCentral::class,"getSucursales"]);
+		Route::post('getInventarioSucursalFromCentral', [sendCentral::class,"getInventarioSucursalFromCentral"]);
+		Route::post('setInventarioSucursalFromCentral', [sendCentral::class,"setInventarioSucursalFromCentral"]);
+		
+		Route::post('getInventarioFromSucursal', [sendCentral::class,"getInventarioFromSucursal"]);
+		
+		Route::post('setCambiosInventarioSucursal', [sendCentral::class,"setCambiosInventarioSucursal"]);
+		Route::get('getTareasCentral', [sendCentral::class,"getTareasCentral"]);
+		Route::post('runTareaCentral', [sendCentral::class,"runTareaCentral"]);
+		
+		//res
+		Route::post('resinventario', [sendCentral::class,"resinventario"]);
+		Route::post('respedidos', [sendCentral::class,"respedidos"]);
+	
+		Route::post('setexportpedido', [PedidosController::class,"setexportpedido"]);
+		
+		Route::get("/recibedSocketEvent",[sendCentral::class,"recibedSocketEvent"]);
 		
 		
 		
+		//Update App
+		//Route::get('update', [sendCentral::class,"updateApp"]);
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
 });
-	//req
-	Route::post('reqpedidos', [sendCentral::class,"reqpedidos"]);
-	Route::post('reqinventario', [sendCentral::class,"reqinventario"]);
 	
-	//res
-	Route::post('resinventario', [sendCentral::class,"resinventario"]);
-	Route::post('respedidos', [sendCentral::class,"respedidos"]);
-
-	Route::post('setexportpedido', [PedidosController::class,"setexportpedido"]);
+	
+	
+	
 
 
-	
-	
-	
+
 
 
 

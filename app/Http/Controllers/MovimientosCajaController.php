@@ -31,6 +31,7 @@ class MovimientosCajaController extends Controller
             $mov->categoria = $req->categoria;
             $mov->created_at = $fecha;
             $mov->monto = floatval($req->monto);
+            $mov->id_vendedor = session("id_usuario");
             $mov->save();
             if ($mov->save()) {
                  if ($req->categoria==2 || $req->categoria==3) {

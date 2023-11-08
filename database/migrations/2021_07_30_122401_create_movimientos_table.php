@@ -20,6 +20,9 @@ class CreateMovimientosTable extends Migration
             $table->text('motivo')->nullable();
             $table->text('tipo_pago')->nullable();
             $table->text('monto')->nullable();
+
+            $table->integer("id_usuario")->unsigned();
+            $table->foreign('id_usuario')->references('id')->on('usuarios');
             
             $table->timestamps();
         });
