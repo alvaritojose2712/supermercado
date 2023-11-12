@@ -553,29 +553,29 @@ class PedidosController extends Controller
             $id = $req->id;
             $motivo = $req->motivo;
 
-            // $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
-            //     "id_pedido" => $id,
-            //     "tipo" => "eliminarPedido",
-            // ]);
+            $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
+                "id_pedido" => $id,
+                "tipo" => "eliminarPedido",
+            ]);
             
-            // if ((new UsuariosController)->isAdmin()) {
+            if ((new UsuariosController)->isAdmin()) {
 
                 
-            // }elseif($isPermiso["permiso"]){
+            }elseif($isPermiso["permiso"]){
                 
-            // }else{
+            }else{
 
-            //     $nuevatarea = (new TareaslocalController)->createTareaLocal([
-            //         "id_pedido" =>  $id,
-            //         "valoraprobado" => 0,
-            //         "tipo" => "eliminarPedido",
-            //         "descripcion" => "Solicitud de eliminación de pedido: #".$id,
-            //     ]);
-            //     if ($nuevatarea) {
-            //         return Response::json(["msj"=>"Debe esperar aprobación del Administrador","estado"=>false]);
-            //     }
+                $nuevatarea = (new TareaslocalController)->createTareaLocal([
+                    "id_pedido" =>  $id,
+                    "valoraprobado" => 0,
+                    "tipo" => "eliminarPedido",
+                    "descripcion" => "Solicitud de eliminación de pedido: #".$id,
+                ]);
+                if ($nuevatarea) {
+                    return Response::json(["msj"=>"Debe esperar aprobación del Administrador","estado"=>false]);
+                }
 
-            // }
+            }
 
             $this->checkPedidoAuth($id);
             if ($id) {
