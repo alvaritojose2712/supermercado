@@ -102,7 +102,31 @@ class PagoPedidosController extends Controller
         $total_ins = floatval($req->debito)+floatval($req->efectivo)+floatval($req->transferencia)+floatval($req->biopago)+floatval($req->credito);
 
         //Excepciones
-
+        if ($req->credito != 0) {
+            $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
+                "id_pedido" => $req->id,
+                "tipo" => "credito",
+            ]);
+            if ((new UsuariosController)->isAdmin()) {
+                // Avanza
+            } elseif ($isPermiso["permiso"]) {
+                if ($isPermiso["valoraprobado"] == round($req->credito, 0)) {
+                    // Avanza
+                } else {
+                    return Response::json(["msj" => "Error: Valor no aprobado", "estado" => false]);
+                }
+            } else {
+                $nuevatarea = (new TareaslocalController)->createTareaLocal([
+                    "id_pedido" => $req->id,
+                    "valoraprobado" => round($req->credito, 0),
+                    "tipo" => "credito",
+                    "descripcion" => "Solicitud de Crédito: " . round($req->credito, 0) . " $",
+                ]);
+                if ($nuevatarea) {
+                    return Response::json(["msj" => "Debe esperar aprobación del Administrador", "estado" => false]);
+                }
+            }
+        }
        
         if ($req->credito!=0&&$ped->id_cliente==1) {
             return Response::json(["msj"=>"Error: En caso de crédito, debe registrar los datos del cliente","estado"=>false]);

@@ -518,14 +518,31 @@ class PedidosController extends Controller
         return false;   
        }
     }
-    public function checkPedidoPago($id,$tipo="pedido")
+    public function checkPedidoPago($id, $tipo = "pedido")
     {
-        $pedidomodify = $tipo=="pedido"? pedidos::find($id): pedidos::find(items_pedidos::find($id)->id_pedido);
+        $pedidomodify = $tipo == "pedido" ? pedidos::find($id) : pedidos::find(items_pedidos::find($id)->id_pedido);
         if ($pedidomodify->estado) {
-            
+            $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
+                "id_pedido" => $pedidomodify->id,
+                "tipo" => "modped",
+            ]);
+
+            if ((new UsuariosController)->isAdmin()) {
+            } elseif ($isPermiso["permiso"]) {
+            } else {
+                $nuevatarea = (new TareaslocalController)->createTareaLocal([
+                    "id_pedido" => $pedidomodify->id,
+                    "tipo" => "modped",
+                    "valoraprobado" => 0,
+                    "descripcion" => "Modificar pedido",
+                ]);
+                if ($nuevatarea) {
+                    throw new \Exception("Debe esperar aprobación del Administrador", 1);
+                }
+            }
             $pedidomodify->estado = 0;
             if ($pedidomodify->save()) {
-                pago_pedidos::where("id_pedido",$pedidomodify->id)->delete();
+                pago_pedidos::where("id_pedido", $pedidomodify->id)->delete();
             }
         }
     }
