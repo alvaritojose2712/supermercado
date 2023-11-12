@@ -320,24 +320,24 @@ class PagoPedidosController extends Controller
             if (session()->has("id_usuario")) {
     
                 if ($monto_pago_deudor<0) {
-                    // $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
-                    //     "id_pedido" => null,
-                    //     "tipo" => "devolucionPago",
-                    // ]);
+                    $isPermiso = (new TareaslocalController)->checkIsResolveTarea([
+                        "id_pedido" => null,
+                        "tipo" => "devolucionPago",
+                    ]);
                     
-                    // if ((new UsuariosController)->isAdmin()) {
-                    // }elseif($isPermiso["permiso"]){
-                    // }else{
-                    //     $nuevatarea = (new TareaslocalController)->createTareaLocal([
-                    //         "id_pedido" => null,
-                    //         "tipo" => "devolucionPago",
-                    //         "valoraprobado" => $monto_pago_deudor,
-                    //         "descripcion" => "Devolver dinero $ ".$monto_pago_deudor,
-                    //     ]);
-                    //     if ($nuevatarea) {
-                    //         throw new \Exception("Debe esperar aprobación del Administrador", 1);
-                    //     }
-                    // }
+                    if ((new UsuariosController)->isAdmin()) {
+                    }elseif($isPermiso["permiso"]){
+                    }else{
+                        $nuevatarea = (new TareaslocalController)->createTareaLocal([
+                            "id_pedido" => null,
+                            "tipo" => "devolucionPago",
+                            "valoraprobado" => $monto_pago_deudor,
+                            "descripcion" => "Devolver dinero $ ".$monto_pago_deudor,
+                        ]);
+                        if ($nuevatarea) {
+                            throw new \Exception("Debe esperar aprobación del Administrador", 1);
+                        }
+                    }
                 }
                 $id_cliente = $req->id_cliente;
                 $pedido = new pedidos;
