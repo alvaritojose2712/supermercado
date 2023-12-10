@@ -594,7 +594,7 @@ class PedidosController extends Controller
 
             }
 
-            $this->checkPedidoAuth($id);
+            //$this->checkPedidoAuth($id);
             if ($id) {
                 $this->delPedidoFun($id, $motivo);
             }
@@ -900,17 +900,17 @@ class PedidosController extends Controller
     {   
         if (!$fecha) {return Response::json(["msj"=>"Error: Fecha inválida","estado"=>false]);}
 
-        if ($check_pendiente) {
-            $pedido_pendientes_check = pedidos::where("estado",0)->get();
-            if (count($pedido_pendientes_check)) {
-                return Response::json([
-                    "msj" => "Error: Hay pedidos pendientes ".$pedido_pendientes_check->map(function($q){
-                        return $q->id;
-                    }) ,
-                    "estado" => false
-                ]);
-            }
-        }
+        // if ($check_pendiente) {
+        //     $pedido_pendientes_check = pedidos::where("estado",0)->get();
+        //     if (count($pedido_pendientes_check)) {
+        //         return Response::json([
+        //             "msj" => "Error: Hay pedidos pendientes ".$pedido_pendientes_check->map(function($q){
+        //                 return $q->id;
+        //             }) ,
+        //             "estado" => false
+        //         ]);
+        //     }
+        // }
 
 
         $id_vendedor = $usuario?[$usuario]:$this->selectUsersTotalizar($totalizarcierre); 
